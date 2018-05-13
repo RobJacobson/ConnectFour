@@ -25,5 +25,11 @@ namespace ConnectFour.Gameplay
             return $"Player { Tok } into ({ Col }, { Row })";
         }
 
+        // Returns the text color for writing this agent's tokens to console
+        public ConsoleColor OutputColor()
+        {
+            return ((Tok == Token.Red) ? ConsoleColor.Red : ConsoleColor.Yellow);
+        }
+
     }
 }

@@ -44,7 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Agents\Class1.cs" />
+    <Compile Include="Agents\ProgrammedAgent.cs" />
     <Compile Include="Agents\RandomAgent.cs" />
     <Compile Include="Gameplay\Move.cs" />
     <Compile Include="Gameplay\Board.cs" />

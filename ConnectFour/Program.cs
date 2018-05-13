@@ -13,7 +13,7 @@ namespace ConnectFour
         static void Main(string[] args)
         {
             // Define the two players competing against each other
-            //            Agent player1 = new HumanAgent(Token.Red);
+            // Agent player1 = new HumanAgent(Token.Red);
             Agent player1 = new RandomAgent(Token.Red);
             Agent player2 = new RandomAgent(Token.Yellow);
 

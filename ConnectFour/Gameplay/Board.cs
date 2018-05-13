@@ -16,7 +16,7 @@ namespace ConnectFour.Gameplay
         // Height of board in rows
         public int Rows { get; }
 
-        // Height of each individual column in non-empty tokens
+        // Array of ints for each column's current height (in non-empty tokens)
         public int[] Height { get; private set; }
 
         // 2D array of tokens to represent board
@@ -26,7 +26,7 @@ namespace ConnectFour.Gameplay
         private readonly Stack<Move> moves;
 
 
-        // Constructs a new Connect-Four board with the given rows and columns
+        // Constructs a new Connect-Four board with the given dimensions
         public Board(int cols, int rows)
         {
             Cols = cols;
@@ -44,31 +44,23 @@ namespace ConnectFour.Gameplay
         }
 
 
-        // Represents dropping player's token into specified colummn
+        // Updates board to push token into specified column
         public void Push(Move move)
         {
-            // Set the row number of where token falls
-            move.Row = Height[move.Col];
-
-            // Save this move and return token at position
+            move.Row = Height[move.Col]++;
             moves.Push(move);
             tokens[move.Col, move.Row] = move.Tok;
-            Height[move.Col]++;
         }
-        
 
-        // Removes the last move from the board and returns its corresponding token
+
+        // Updates board to pop (and then return) the move-recent token
         public Token Pop()
         {
-            // Get the column and row for the most-recent action
             Move move = moves.Pop();
-            (int col, int row) = (move.Col, Height[move.Col] - 1);
-
-            // Pop the token off this column's stack and return it
-            Token tok = tokens[col, row];
-            tokens[col, row] = Token.None;
-            Height[col]--;
-            return tok;
+            Token temp = tokens[move.Col, move.Row];
+            tokens[move.Col, move.Row] = Token.None;
+            Height[move.Col]--;
+            return temp;
         }
 
 
@@ -143,26 +135,47 @@ namespace ConnectFour.Gameplay
         // Returns a textual representation of the board grid
         public override string ToString()
         {
+            // Create string buffer
             var sb = new StringBuilder();
+
+            // Append O's, X's and -'s for tokens on board (last row first)
             for (int row = Rows - 1; row >= 0; row--)
             {
+                sb.Append(" ║ ");
                 for (int col = 0; col < Cols; col++)
                 {
                     switch (tokens[col, row])
                     {
-                        case Token.Red:     sb.Append("O  "); break;
-                        case Token.Yellow:  sb.Append("X  "); break;
-                        default:            sb.Append("-  "); break;
+                        case Token.Red:     sb.Append(" O "); break;
+                        case Token.Yellow:  sb.Append(" X "); break;
+                        default:            sb.Append(" ■ "); break;
                     }
                 }
+                sb.Append(" ║ ");
                 sb.Append(Environment.NewLine);
             }
-            
+
+            // Append bottom border
+            sb.AppendLine(" ╠" + new string('═', Cols * 3 + 2) + "╣");
+
+            // Append feet and column numbers
+            sb.Append(" ╩ ");
+            foreach (int i in Enumerable.Range(0, Cols))
+            {
+                sb.Append($" {i} ");
+            }
+            sb.Append(" ╩ ");
+            sb.Append(Environment.NewLine);
+
+            // Append a caret that corresponds to the last column played
+            sb.AppendLine("^".PadLeft(moves.Peek().Col * 3 + 5));
+
+            // Return the complete string
             return sb.ToString();
         }
         
 
-        // Prints colorized board to console, with caret at column of last move
+        // Prints colorized board to console
         public void Show()
         {
             int lastCol = moves.Peek().Col;
@@ -172,31 +185,29 @@ namespace ConnectFour.Gameplay
             {
                 switch (c)
                 {
-                    case '\r':
-                        Console.WriteLine();
-                        break;
-
                     case 'O':
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.Write(c + "  ");
                         break;
 
                     case 'X':
                         Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.Write(c + "  ");
                         break;
 
-                    case '-':
-                        Console.ForegroundColor = ConsoleColor.Gray;
-                        Console.Write(c + "  ");
+                    case '■':
+                        Console.ForegroundColor = ConsoleColor.DarkBlue;
+                        break;
+
+                    case '^':
+                        Console.ForegroundColor = (moves.Peek().OutputColor());
+                        break;
+
+                    default:
+                        Console.ForegroundColor = ConsoleColor.DarkGray;
                         break;
                 }
+                Console.Write(c);
             }
 
-            // Draw a caret to identify the column of last move
-            Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.WriteLine(new string(' ', lastCol * 3) + "^");
-            Console.WriteLine();
             Console.ResetColor();
         }
 
