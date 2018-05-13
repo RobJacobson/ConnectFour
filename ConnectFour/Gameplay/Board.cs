@@ -151,8 +151,7 @@ namespace ConnectFour.Gameplay
                         default:            sb.Append(" ■ "); break;
                     }
                 }
-                sb.Append(" ║ ");
-                sb.Append(Environment.NewLine);
+                sb.AppendLine(" ║ ");
             }
 
             // Append bottom border
@@ -164,8 +163,7 @@ namespace ConnectFour.Gameplay
             {
                 sb.Append($" {i} ");
             }
-            sb.Append(" ╩ ");
-            sb.Append(Environment.NewLine);
+            sb.AppendLine(" ╩ ");
 
             // Append a caret that corresponds to the last column played
             sb.AppendLine("^".PadLeft(moves.Peek().Col * 3 + 5));
