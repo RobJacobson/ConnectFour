@@ -37,7 +37,7 @@ namespace ConnectFour
                 // Draw updated board
                 Console.WriteLine($"Turn {i + 1}, {player} into ({move.Col}, {move.Row}):");
                 Console.WriteLine();
-                board.Show(move.Col);
+                board.Show();
 
                 // Goal test: End game if this action results in four-in-a-row
                 if (IsWinner(move))

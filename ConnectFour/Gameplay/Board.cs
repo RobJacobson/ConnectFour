@@ -163,9 +163,8 @@ namespace ConnectFour.Gameplay
         
 
         // Prints colorized board to console, with caret at column of last move
-        public void Show(int col)
+        public void Show()
         {
-            int lastRow = moves.Peek().Row;
             int lastCol = moves.Peek().Col;
             string output = this.ToString();
 
@@ -195,12 +194,9 @@ namespace ConnectFour.Gameplay
             }
 
             // Draw a caret to identify the column of last move
-            if (col > -1)
-            {
-                Console.ForegroundColor = ConsoleColor.DarkGray;
-                Console.WriteLine(new string(' ', col * 3) + "^");
-                Console.WriteLine();
-            }
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine(new string(' ', lastCol * 3) + "^");
+            Console.WriteLine();
             Console.ResetColor();
         }
 
