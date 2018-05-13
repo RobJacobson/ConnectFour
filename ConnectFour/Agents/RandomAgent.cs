@@ -21,7 +21,7 @@ namespace ConnectFour.Agents
             int col = random.Next(0, board.Cols);
 
             // Continue guessing if initial guess was invalid (column full)
-            while (board.Height[col] >= board.Rows - 1)
+            while (board.Height[col] >= board.Rows)
             {
                 col = random.Next(0, board.Cols);
             }

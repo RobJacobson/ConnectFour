@@ -12,25 +12,28 @@ namespace ConnectFour
     {
         static void Main(string[] args)
         {
-            // Define the two players competing against each other
-            // Agent player1 = new HumanAgent(Token.Red);
-            Agent player1 = new RandomAgent(Token.Red);
-            Agent player2 = new RandomAgent(Token.Yellow);
+            while (true)
+            {
+                // Define the two players competing against each other
+                // Agent player1 = new HumanAgent(Token.Red);
+                Agent player1 = new RandomAgent(Token.Red);
+                Agent player2 = new RandomAgent(Token.Yellow);
 
-            // Identify players
-            Console.WriteLine($"New game: { player1 } vs { player2 }");
-            Console.WriteLine();
+                // Identify players
+                Console.WriteLine($"New game: { player1 } vs { player2 }");
+                Console.WriteLine();
 
-            // Create new game on standard 7 x 6 board
-            Game game = new Game(player1, player2, 7, 6);
+                // Create new game on standard 7 x 6 board
+                Game game = new Game(player1, player2, 7, 6);
 
-            // Play until we get a winner
-            Token winner = game.Start();
+                // Play until we get a winner
+                Token winner = game.Start();
 
-            // Wait before exiting
-            Console.WriteLine();
-            Console.WriteLine($"Player { winner } wins!!!");
-            Console.ReadLine();
+                // Wait before exiting
+                Console.WriteLine();
+                Console.WriteLine($"Player { winner } wins!!!");
+                Console.ReadLine();
+            }
 
         }
     }
