@@ -138,7 +138,10 @@ namespace ConnectFour.Gameplay
             // Create string buffer
             var sb = new StringBuilder();
 
-            // Append O's, X's and -'s for tokens on board (last row first)
+            // Append top border
+            sb.AppendLine(" ╓-" + new string('-', Cols * 3) + "-╖ ");
+
+            // Append grid of tokens for board (last row first)
             for (int row = Rows - 1; row >= 0; row--)
             {
                 sb.Append(" ║ ");
