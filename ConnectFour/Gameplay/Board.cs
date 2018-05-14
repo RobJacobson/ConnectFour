@@ -16,14 +16,14 @@ namespace ConnectFour.Gameplay
         // Height of board in rows
         public int Rows { get; }
 
-        // Array of ints for each column's current height (in non-empty tokens)
+        // Array of ints for each column's current height (in non-blank tokens)
         public int[] Height { get; private set; }
+
+        // Stack to store all committed moves
+        public Stack<Move> Moves { get; }
 
         // 2D array of tokens to represent board
         private readonly Token[,] tokens;
-
-        // Stack to store all committed moves
-        private readonly Stack<Move> moves;
 
 
         // Constructs a new Connect-Four board with the given dimensions
@@ -31,7 +31,7 @@ namespace ConnectFour.Gameplay
         {
             Cols = cols;
             Rows = rows;
-            moves = new Stack<Move>();
+            Moves = new Stack<Move>();
             Height = new int[cols];
             tokens = new Token[cols, rows];
         }
@@ -48,7 +48,7 @@ namespace ConnectFour.Gameplay
         public void Push(Move move)
         {
             move.Row = Height[move.Col]++;
-            moves.Push(move);
+            Moves.Push(move);
             tokens[move.Col, move.Row] = move.Tok;
         }
 
@@ -56,7 +56,7 @@ namespace ConnectFour.Gameplay
         // Updates board to pop (and then return) the move-recent token
         public Token Pop()
         {
-            Move move = moves.Pop();
+            Move move = Moves.Pop();
             Token temp = tokens[move.Col, move.Row];
             tokens[move.Col, move.Row] = Token.None;
             Height[move.Col]--;
@@ -105,6 +105,7 @@ namespace ConnectFour.Gameplay
             // Get the starting row/column for this diagonal
             (int col, int row) = (diag >= 0) ? (Cols - diag - 1, 0) : (0, -diag);
 
+            // Iterate through each token in this diagonal
             while (col > 0 && row < Rows)
             {
                 yield return tokens[col--, row++];
@@ -158,18 +159,13 @@ namespace ConnectFour.Gameplay
             }
 
             // Append bottom border
-            sb.AppendLine(" ╠" + new string('═', Cols * 3 + 2) + "╣");
+            sb.AppendLine(" ╠═" + new string('═', Cols * 3) + "═╣");
 
             // Append feet and column numbers
-            sb.Append(" ╩ ");
-            foreach (int i in Enumerable.Range(0, Cols))
-            {
-                sb.Append($" {i} ");
-            }
-            sb.AppendLine(" ╩ ");
+            sb.AppendLine(" ╩  " + String.Join("  ", Enumerable.Range(0, Cols)) + "  ╩ ");
 
             // Append a caret that corresponds to the last column played
-            sb.AppendLine("^".PadLeft(moves.Peek().Col * 3 + 5));
+            sb.AppendLine(new String(' ', Moves.Peek().Col * 3 + 3) + " ^ ");
 
             // Return the complete string
             return sb.ToString();
@@ -179,7 +175,7 @@ namespace ConnectFour.Gameplay
         // Prints colorized board to console
         public void Show()
         {
-            int lastCol = moves.Peek().Col;
+            int lastCol = Moves.Peek().Col;
             string output = this.ToString();
 
             foreach (char c in output)
@@ -199,7 +195,7 @@ namespace ConnectFour.Gameplay
                         break;
 
                     case '^':
-                        Console.ForegroundColor = (moves.Peek().OutputColor());
+                        Console.ForegroundColor = (Moves.Peek().OutputColor());
                         break;
 
                     default:
@@ -210,6 +206,16 @@ namespace ConnectFour.Gameplay
             }
 
             Console.ResetColor();
+        }
+
+
+        // Returns a list of the column numbers for each move from this agent
+        public List<int> MovesByPlayer(Agent player)
+        {
+            return Moves.Reverse()
+                        .Where(move => move.Tok == player.Tok)
+                        .Select(move => move.Col)
+                        .ToList();
         }
 
     }

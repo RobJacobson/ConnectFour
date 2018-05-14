@@ -19,7 +19,7 @@ namespace ConnectFour.Agents
 
         public override Move GetNextMove(Board board)
         {
-            return new Move(Color, moves.Dequeue());
+            return new Move(Tok, moves.Dequeue());
         }
 
     }

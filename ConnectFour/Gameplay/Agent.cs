@@ -10,25 +10,22 @@ namespace ConnectFour
     // Abstract base class for agent
     public abstract class Agent
     {
-        // The color of this agent (red or black)
-        public Token Color { get; }
+        // The color of this agent
+        public Token Tok { get; }
 
-
-        // Constructor to assign the player's color
+        // Base constructor to assign the player's color
         public Agent(Token color)
         {
-            Color = color;
+            Tok = color;
         }
 
-
-        // Given current state, calculates and returns agent's next move
+        // Abstract method for custom logic to determine this agent's next move
         public abstract Move GetNextMove(Board board);
 
-
-        // Return string for pretty-print output using derived class name
+        // Return string for pretty-print output using derived class's name
         public override string ToString()
         {
-            return $"Player { Color } ({ this.GetType().Name })";
+            return $"Player { Tok } ({ this.GetType().Name })";
         }
 
     }

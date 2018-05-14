@@ -24,34 +24,32 @@ namespace ConnectFour
 
 
         // Initiates a game and continues until one player wins (or board full)
-        public Token Start()
+        public (Token, Board) Start()
         {
-            // Iterate through the maximum number of moves.
+            // Iterate through the maximum number of moves
             for (int turn = 0; turn < board.Cols * board.Rows; turn++)
             {
                 // Get current player (player 1 even moves, player 2 odd)
                 Agent player = (turn % 2 == 0) ? player1 : player2;
 
-                // Given current board, get next action and update board
+                // Given current board, get next action from player and update board
                 Move move = player.GetNextMove(board);
-
-                // Update board state with this action
                 board.Push(move);
 
                 // Draw updated board
-                Console.WriteLine($"Turn {turn + 1}, {player} into ({move.Col}, {move.Row}):");
+                Console.WriteLine($"Turn {turn}, {player} ==> ({move.Col}, {move.Row}):");
                 Console.WriteLine();
                 board.Show();
 
                 // Goal test: End game if this action results in four-in-a-row
                 if (IsWinner(move))
                 {
-                    return player.Color;
+                    return (player.Tok, board);
                 }
             }
 
             // Mo winner; game over
-            return Token.None;
+            return (Token.None, board);
         }
         
 
@@ -60,8 +58,8 @@ namespace ConnectFour
         {
             bool winRow = FourInRow(move, board.Row(move.Row));
             bool winCol = FourInRow(move, board.Col(move.Col));
-            bool winUL  = FourInRow(move, board.UpLeftDiag(move.Row, move.Col));
-            bool winUR  = FourInRow(move, board.UpRightDiag(move.Row, move.Col));
+            bool winUL  = FourInRow(move, board.UpLeftDiag(move.Col, move.Row));
+            bool winUR  = FourInRow(move, board.UpRightDiag(move.Col, move.Row));
 
             return (winRow || winCol || winUL || winUR);
         }

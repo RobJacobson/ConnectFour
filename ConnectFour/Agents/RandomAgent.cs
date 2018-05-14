@@ -26,7 +26,7 @@ namespace ConnectFour.Agents
                 col = random.Next(0, board.Cols);
             }
 
-            return new Move(Color, col);
+            return new Move(Tok, col);
         }
     }
 }

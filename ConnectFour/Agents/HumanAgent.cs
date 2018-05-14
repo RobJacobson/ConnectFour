@@ -17,16 +17,16 @@ namespace ConnectFour.Agents
         public override Move GetNextMove(Board board)
         {
             // Prompt for input
-            Console.Write($"{base.Color,-8}> ");
+            Console.Write($"{base.Tok,-8}> ");
 
             // Read input and repeat if input was invalid (not a number)
             int col = 0;
             while (!int.TryParse(Console.ReadLine(), out col))
             {
-                Console.Write($"{base.Color,-8}> ");
+                Console.Write($"{base.Tok,-8}> ");
             }
 
-            return new Move(Color, col);
+            return new Move(Tok, col);
         }
 
     }
