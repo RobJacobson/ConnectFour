@@ -51,7 +51,7 @@
     <Compile Include="Gameplay\Agent.cs" />
     <Compile Include="Gameplay\Game.cs" />
     <Compile Include="Agents\HumanAgent.cs" />
-    <Compile Include="Gameplay\Token.cs" />
+    <Compile Include="Token.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
