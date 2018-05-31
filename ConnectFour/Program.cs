@@ -24,7 +24,7 @@ namespace ConnectFour
 
                 // Construct random agents (no intelligence)
                 Agent player1 = new RandomAgent(Token.Red);
-                Agent player2 = new RandomAgent(Token.Yellow);
+                Agent player2 = new RandomAgent(Token.Yel);
 
                 // Identify players
                 Console.WriteLine($"New game: { player1 } vs { player2 }");
@@ -48,10 +48,10 @@ namespace ConnectFour
                 }
 
                 // Output each player's moves by column number
-                string p1 = String.Join(", ", board.MovesByPlayer(player1));
-                string p2 = String.Join(", ", board.MovesByPlayer(player2));
-                Console.WriteLine($"{player1} moves: {p1}");
-                Console.WriteLine($"{player2} moves: {p2}");
+                //string p1 = String.Join(", ", board.MovesByPlayer(player1));
+                //string p2 = String.Join(", ", board.MovesByPlayer(player2));
+                //Console.WriteLine($"{player1} moves: {p1}");
+                //Console.WriteLine($"{player2} moves: {p2}");
 
                 // Pause before continuing
                 Console.ReadLine();

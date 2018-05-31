@@ -7,6 +7,7 @@ using ConnectFour.Gameplay;
 
 namespace ConnectFour.Agents
 {
+
     // An agent without any intelligence who just guesses random moves
     class RandomAgent : Agent
     {
@@ -21,7 +22,7 @@ namespace ConnectFour.Agents
             int col = random.Next(0, board.Cols);
 
             // Continue guessing if initial guess was invalid (column full)
-            while (board.Height[col] >= board.Rows)
+            while (board.ColHeight[col] >= board.Rows)
             {
                 col = random.Next(0, board.Cols);
             }

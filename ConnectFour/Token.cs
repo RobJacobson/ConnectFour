@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 namespace ConnectFour
 {
     // Enumeration of different token colors (i.e., player colors)
-    public enum Token : byte { None, Red, Yellow }
+    public enum Token : byte { None, Red, Yel }
 }
