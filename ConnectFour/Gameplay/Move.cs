@@ -6,29 +6,30 @@ using System.Threading.Tasks;
 
 namespace ConnectFour.Gameplay
 {
-    // Represents an action of inserting player's token into the given column
-    public class Move
+    // Struct to represent action of inserting token into given col and row
+    public struct Move
     {
-        public Player Tok { get; }
-        public int   Col { get; }
-        public int   Row { get; set; }
+        public Color Player { get; }
+        public byte  Col    { get; }
+        public byte  Row    { get; }
 
-        public Move(Player player, int column)
+        // Constructs a new Move struct
+        public Move(Color player, int col, int row)
         {
-            Tok = player;
-            Col = (byte)column;
-            Row = -1;
+            Player = player;
+            Col = (byte)col;
+            Row = (byte)row;
         }
 
         public override string ToString()
         {
-            return $"Player { Tok } into ({ Col }, { Row })";
+            return $"{ Player } --> ({ Col }, { Row })";
         }
 
-        // Returns the text color for writing this agent's tokens to console
+        // Returns the corresponding console color this player
         public ConsoleColor OutputColor()
         {
-            return ((Tok == Player.Red) ? ConsoleColor.Red : ConsoleColor.Yellow);
+            return ((Player == Color.Red) ? ConsoleColor.Red : ConsoleColor.Yellow);
         }
 
     }

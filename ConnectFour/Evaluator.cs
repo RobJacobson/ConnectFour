@@ -14,10 +14,10 @@ namespace ConnectFour
         static int CalcScoreCol(int col, Board board)
         {
             int size = board.NumRows;
-            Player[] tokens = new Player[size];
+            Color[] tokens = new Color[size];
             for (int row = 0; row < size; row++)
             {
-                tokens[row] = board.Tokens[col, row];
+                tokens[row] = board.Grid[col, row];
             }
             return CalcScore(tokens);
         }
@@ -26,10 +26,10 @@ namespace ConnectFour
         static int CalcScoreRow(int row, Board board)
         {
             int size = board.NumCols;
-            Player[] tokens = new Player[size];
+            Color[] tokens = new Color[size];
             for (int col = 0; col < size; col++)
             {
-                tokens[row] = board.Tokens[col, row];
+                tokens[row] = board.Grid[col, row];
             }
             return CalcScore(tokens);
         }
@@ -47,7 +47,7 @@ namespace ConnectFour
         }
 
         // Returns a score for possible winning positions in array
-        static int CalcScore(Player[] tokens)
+        static int CalcScore(Color[] tokens)
         {
             int score = 0;
             int redCount = 0;
@@ -59,8 +59,8 @@ namespace ConnectFour
                 // Add a count for the token entering the window
                 switch (tokens[i])
                 {
-                    case Player.Red:  redCount++;  break;
-                    case Player.Yel:  yelCount++;  break;
+                    case Color.Red:  redCount++;  break;
+                    case Color.Yel:  yelCount++;  break;
                 }
 
                 // Assign score for the current four tokens in a moving window
@@ -69,8 +69,8 @@ namespace ConnectFour
                     // Subtract a count for the token departing the window
                     switch (tokens[i - 4])
                     {
-                        case Player.Red:  redCount--;  break;
-                        case Player.Yel:  yelCount--;  break;
+                        case Color.Red:  redCount--;  break;
+                        case Color.Yel:  yelCount--;  break;
                     }
 
                     // Ensure we're counting four tokens max

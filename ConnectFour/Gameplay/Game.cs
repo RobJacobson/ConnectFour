@@ -26,49 +26,69 @@ namespace ConnectFour
 
 
         // Initiates a game and continues until one player wins (or board full)
-        public (Player, Board) Start()
+        public (Color, Board) Start()
         {
             // Iterate through the maximum number of moves
             for (int turn = 0; turn < board.NumCols * board.NumRows; turn++)
             {
-                // Get current player (player 1 even moves, player 2 odd)
+                // Get current player (player 1 for even moves, player 2 odd)
                 Agent player = (turn % 2 == 0) ? player1 : player2;
 
                 // Given current board, get next action from player and update board
                 Move move = player.GetNextMove(board);
-                board.Push(player.Tok, move.Col);
+                board.PushMove(move);
 
                 // Draw updated board
-                Console.WriteLine($"Turn {turn}, {player} ==> ({move.Col}, {move.Row}):");
+                Console.WriteLine($"Turn {turn}, {player} ==> ({move.Col}, {move.Row})");
+                Console.WriteLine(board);
                 Console.WriteLine();
-//                board.Show();
 
                 // Goal test: End game if this action results in four-in-a-row
-                //if (IsWinner(move))
-                //{
-                //    return (player.Tok, board);
-                //}
+                if (IsWinner(move))
+                {
+                    return (player.Tok, board);
+                }
             }
 
             // Mo winner; game over
-            return (Player.None, board);
+            return (Color.None, board);
         }
-        
-
-        private bool IsWinner(move)
 
 
-        public override string ToString()
+        // Returns true if we have four-of-kind for row, colum, or either diagonal
+        public bool IsWinner(Move move)
         {
-            StringBuilder sb = new StringBuilder();
-            sb.Append(board.ToString());
+            bool winRow = FourOfKind(move.Player, board.RowEnum(move.Row));
+            bool winCol = FourOfKind(move.Player, board.RowEnum(move.Col));
+            bool winUL  = FourOfKind(move.Player, board.UpLeftDiagEnum(move.Col, move.Row));
+            bool winUR  = FourOfKind(move.Player, board.UpRightDiagEnum(move.Col, move.Row));
 
-            // Append a caret that corresponds to the last column played
-            Move lastMove = moves.Peek();
-            sb.AppendLine(new String(' ', lastMove.Col * 3 + 3) + " ^ ");
-
-            return sb.ToString();
+            return (winRow || winCol || winUL || winUR);
         }
+
+
+        // Returns true if the specified range has four-in-row of player's color
+        public bool FourOfKind(Color player, IEnumerable<Color> range)
+        {
+            int matches = 0;
+            foreach (Color token in range)
+            {
+                if (token == player)
+                {
+                    matches++;
+                    if (matches == 4)
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    matches = 0;
+                }
+            }
+            return false;
+        }
+
 
 
         // Prints colorized board to console
@@ -94,7 +114,7 @@ namespace ConnectFour
                         break;
 
                     case '^':
-                        color = (player.Tok == Player.Red) ? ConsoleColor.Red : ConsoleColor.Yellow;
+                        color = (player.Tok == Color.Red) ? ConsoleColor.Red : ConsoleColor.Yellow;
                         break;
 
                     default:
@@ -117,42 +137,6 @@ namespace ConnectFour
         //                .Select(move => move.Col)
         //                .ToList();
         //}
-
-        // Returns a textual representation of the board grid
-        public override string ToString()
-        {
-            // Create string buffer
-            var sb = new StringBuilder();
-
-            // Append top border
-            sb.AppendLine(" ╓-" + new string('-', Cols * 3) + "-╖ ");
-
-            // Append grid of tokens for board (last row first)
-            for (int row = Rows - 1; row >= 0; row--)
-            {
-                sb.Append(" ║ ");
-                for (int col = 0; col < Cols; col++)
-                {
-                    switch (Tokens[col, row])
-                    {
-                        case Player.Red:  sb.Append(" O "); break;
-                        case Player.Yel:  sb.Append(" X "); break;
-                        default:         sb.Append(" ■ "); break;
-                    }
-                }
-                sb.AppendLine(" ║ ");
-            }
-
-            // Append bottom border
-            sb.AppendLine(" ╠═" + new string('═', Cols * 3) + "═╣");
-
-            // Append feet and column numbers
-            sb.AppendLine(" ╩  " + String.Join("  ", Enumerable.Range(0, Cols)) + "  ╩ ");
-
-            // Return the complete string
-            return sb.ToString();
-        }
-
 
     }
 }

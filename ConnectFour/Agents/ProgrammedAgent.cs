@@ -12,7 +12,7 @@ namespace ConnectFour.Agents
     {
         Queue<int> moves;
 
-        public ProgrammedAgent(Player player, params int[] moves) : base(player)
+        public ProgrammedAgent(Color player, params int[] moves) : base(player)
         {
             this.moves = new Queue<int>(moves);
         }

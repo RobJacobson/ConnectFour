@@ -13,7 +13,7 @@ namespace ConnectFour.Agents
     {
         private static Random random = new Random();
 
-        public RandomAgent(Player player) : base(player) { }
+        public RandomAgent(Color player) : base(player) { }
 
         // Selects a random column to play based on the board's state
         public override Move GetNextMove(Board board)
