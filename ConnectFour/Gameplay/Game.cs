@@ -34,13 +34,11 @@ namespace ConnectFour
                 // Get current player (player 1 for even moves, player 2 odd)
                 AbstractAgent player = (turn % 2 == 0) ? player1 : player2;
 
-                // Get column for player's next move
-                int col = player.GetNextMove(board);
-
-                // Drop player's token in given column and get row where it lands
+                // Get the next move and simulate dropping token into column
+                int col = player.GetNextColumn(board);
                 int row = board.Insert(player.Color, col);
 
-                // Add this move to the move queue
+                // Add this move to the move stack
                 Move move = new Move(player.Color, col, row);
                 moves.Push(move);
 

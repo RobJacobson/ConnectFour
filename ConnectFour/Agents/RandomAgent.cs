@@ -16,7 +16,7 @@ namespace ConnectFour.Agents
         public RandomAgent(Color player) : base(player) { }
 
         // Selects a random column to play based on the board's state
-        public override int GetNextMove(Board board)
+        public override int GetNextColumn(Board board)
         {
             // Guess a random number in range [0, board.Cols - 1]
             int col = random.Next(0, board.NumCols);

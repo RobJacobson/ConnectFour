@@ -20,7 +20,7 @@ namespace ConnectFour
         }
 
         // Abstract method for derived agent to return column of next move
-        public abstract int GetNextMove(Board board);
+        public abstract int GetNextColumn(Board board);
 
         // Return string for pretty-print output using derived class's name
         public override string ToString()
