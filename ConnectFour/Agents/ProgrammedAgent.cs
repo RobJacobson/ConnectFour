@@ -17,9 +17,9 @@ namespace ConnectFour.Agents
             this.moves = new Queue<int>(moves);
         }
 
-        public override Move GetNextMove(Board board)
+        public override int GetNextMove(Board board)
         {
-            return new Move(Player, moves.Dequeue());
+            return moves.Dequeue();
         }
 
     }

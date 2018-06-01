@@ -42,16 +42,16 @@ namespace ConnectFour.Gameplay
 
 
         // Drops player's token into column; returns row of where it lands
-        public int PushMove(Move move)
+        public int Insert(Color token, int col)
         {
-            int row = ColHeight[move.Col]++;
-            Grid[move.Col, row] = move.Player;
+            int row = ColHeight[col]++;
+            Grid[col, row] = token;
             return row;
         }
 
 
         // Pops and returns the topmost token from the specified column
-        public Color PopMove(int col)
+        public Color Remove(int col)
         {
             int row = ColHeight[col]--;
             Color top = Grid[col, row];

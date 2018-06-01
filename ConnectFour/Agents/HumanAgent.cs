@@ -14,19 +14,19 @@ namespace ConnectFour.Agents
         public HumanAgent(Color player) : base(player) { }
 
         // Override GetNextMove with custom logic
-        public override Move GetNextMove(Board board)
+        public override int GetNextMove(Board board)
         {
             // Prompt for input
-            Console.Write($"{base.Player,-8}> ");
+            Console.Write($"{base.Color,-8}> ");
 
             // Read input and repeat if input was invalid (not a number)
             int col = 0;
             while (!int.TryParse(Console.ReadLine(), out col))
             {
-                Console.Write($"{base.Player,-8}> ");
+                Console.Write($"{base.Color,-8}> ");
             }
 
-            return new Move(Player, col);
+            return col;
         }
 
     }

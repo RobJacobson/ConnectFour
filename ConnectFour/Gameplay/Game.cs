@@ -34,9 +34,15 @@ namespace ConnectFour
                 // Get current player (player 1 for even moves, player 2 odd)
                 AbstractAgent player = (turn % 2 == 0) ? player1 : player2;
 
-                // Given current board, get next action from player and update board
-                Move move = player.GetNextMove(board);
-                board.PushMove(move);
+                // Get column for player's next move
+                int col = player.GetNextMove(board);
+
+                // Drop player's token in given column and get row where it lands
+                int row = board.Insert(player.Color, col);
+
+                // Add this move to the move queue
+                Move move = new Move(player.Color, col, row);
+                moves.Push(move);
 
                 // Draw updated board
                 Console.WriteLine($"Turn {turn}, {player} ==> ({move.Col}, {move.Row})");
@@ -46,7 +52,7 @@ namespace ConnectFour
                 // Goal test: End game if this action results in four-in-a-row
                 if (IsWinner(move))
                 {
-                    return (player.Player, board);
+                    return (player.Color, board);
                 }
             }
 
@@ -58,10 +64,10 @@ namespace ConnectFour
         // Returns true if we have four-of-kind for row, colum, or either diagonal
         public bool IsWinner(Move move)
         {
-            bool winRow = FourOfKind(move.Player, board.RowEnum(move.Row));
-            bool winCol = FourOfKind(move.Player, board.RowEnum(move.Col));
-            bool winUL  = FourOfKind(move.Player, board.UpLeftDiagEnum(move.Col, move.Row));
-            bool winUR  = FourOfKind(move.Player, board.UpRightDiagEnum(move.Col, move.Row));
+            bool winRow = FourOfKind(move.Token, board.RowEnum(move.Row));
+            bool winCol = FourOfKind(move.Token, board.RowEnum(move.Col));
+            bool winUL  = FourOfKind(move.Token, board.UpLeftDiagEnum(move.Col, move.Row));
+            bool winUR  = FourOfKind(move.Token, board.UpRightDiagEnum(move.Col, move.Row));
 
             return (winRow || winCol || winUL || winUR);
         }
@@ -114,7 +120,7 @@ namespace ConnectFour
                         break;
 
                     case '^':
-                        color = (player.Player == Color.Red) ? ConsoleColor.Red : ConsoleColor.Yellow;
+                        color = (player.Color == Color.Red) ? ConsoleColor.Red : ConsoleColor.Yellow;
                         break;
 
                     default:
