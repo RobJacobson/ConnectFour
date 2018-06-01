@@ -49,7 +49,7 @@
     <Compile Include="Evaluator.cs" />
     <Compile Include="Gameplay\Move.cs" />
     <Compile Include="Gameplay\Board.cs" />
-    <Compile Include="Gameplay\Agent.cs" />
+    <Compile Include="Gameplay\AbstractAgent.cs" />
     <Compile Include="Gameplay\Game.cs" />
     <Compile Include="Agents\HumanAgent.cs" />
     <Compile Include="Gameplay\Point.cs" />

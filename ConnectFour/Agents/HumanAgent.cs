@@ -8,7 +8,7 @@ using ConnectFour.Gameplay;
 namespace ConnectFour.Agents
 {
     // Determines next move by promting human player to select a column
-    public class HumanAgent : Agent
+    public class HumanAgent : AbstractAgent
     {
         // Call base constructor
         public HumanAgent(Color player) : base(player) { }
@@ -17,16 +17,16 @@ namespace ConnectFour.Agents
         public override Move GetNextMove(Board board)
         {
             // Prompt for input
-            Console.Write($"{base.Tok,-8}> ");
+            Console.Write($"{base.Player,-8}> ");
 
             // Read input and repeat if input was invalid (not a number)
             int col = 0;
             while (!int.TryParse(Console.ReadLine(), out col))
             {
-                Console.Write($"{base.Tok,-8}> ");
+                Console.Write($"{base.Player,-8}> ");
             }
 
-            return new Move(Tok, col);
+            return new Move(Player, col);
         }
 
     }

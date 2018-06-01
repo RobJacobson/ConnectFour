@@ -9,7 +9,7 @@ namespace ConnectFour.Agents
 {
 
     // An agent without any intelligence who just guesses random moves
-    class RandomAgent : Agent
+    class RandomAgent : AbstractAgent
     {
         private static Random random = new Random();
 
@@ -27,7 +27,7 @@ namespace ConnectFour.Agents
                 col = random.Next(0, board.NumCols);
             }
 
-            return new Move(Tok, col);
+            return new Move(Player, col);
         }
     }
 }

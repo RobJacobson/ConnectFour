@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace ConnectFour.Agents
 {
     // Represents an agent with a preprogrammed list of moves (for testing)
-    class ProgrammedAgent : Agent
+    class ProgrammedAgent : AbstractAgent
     {
         Queue<int> moves;
 
@@ -19,7 +19,7 @@ namespace ConnectFour.Agents
 
         public override Move GetNextMove(Board board)
         {
-            return new Move(Tok, moves.Dequeue());
+            return new Move(Player, moves.Dequeue());
         }
 
     }

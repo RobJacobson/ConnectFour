@@ -11,12 +11,12 @@ namespace ConnectFour
     {
         private readonly Board board;
         private readonly Stack<Move> moves;
-        private readonly Agent player1;
-        private readonly Agent player2;
+        private readonly AbstractAgent player1;
+        private readonly AbstractAgent player2;
 
 
         // Initialize game with specified agents and board dimensions
-        public Game(Agent player1, Agent player2, int cols, int rows)
+        public Game(AbstractAgent player1, AbstractAgent player2, int cols, int rows)
         {
             this.player1 = player1;
             this.player2 = player2;
@@ -32,7 +32,7 @@ namespace ConnectFour
             for (int turn = 0; turn < board.NumCols * board.NumRows; turn++)
             {
                 // Get current player (player 1 for even moves, player 2 odd)
-                Agent player = (turn % 2 == 0) ? player1 : player2;
+                AbstractAgent player = (turn % 2 == 0) ? player1 : player2;
 
                 // Given current board, get next action from player and update board
                 Move move = player.GetNextMove(board);
@@ -46,7 +46,7 @@ namespace ConnectFour
                 // Goal test: End game if this action results in four-in-a-row
                 if (IsWinner(move))
                 {
-                    return (player.Tok, board);
+                    return (player.Player, board);
                 }
             }
 
@@ -92,7 +92,7 @@ namespace ConnectFour
 
 
         // Prints colorized board to console
-        public void Show(Agent player)
+        public void Show(AbstractAgent player)
         {
             string output = this.ToString();
 
@@ -114,7 +114,7 @@ namespace ConnectFour
                         break;
 
                     case '^':
-                        color = (player.Tok == Color.Red) ? ConsoleColor.Red : ConsoleColor.Yellow;
+                        color = (player.Player == Color.Red) ? ConsoleColor.Red : ConsoleColor.Yellow;
                         break;
 
                     default:

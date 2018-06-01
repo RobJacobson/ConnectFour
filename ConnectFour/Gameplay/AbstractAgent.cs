@@ -8,15 +8,15 @@ using ConnectFour.Gameplay;
 namespace ConnectFour
 {
     // Abstract base class for agent
-    public abstract class Agent
+    public abstract class AbstractAgent
     {
         // The color of this agent
-        public Color Tok { get; }
+        public Color Player { get; }
 
         // Base constructor to assign the player's color
-        public Agent(Color color)
+        public AbstractAgent(Color player)
         {
-            Tok = color;
+            Player = player;
         }
 
         // Abstract method for custom logic to determine this agent's next move
@@ -25,7 +25,7 @@ namespace ConnectFour
         // Return string for pretty-print output using derived class's name
         public override string ToString()
         {
-            return $"Player { Tok } ({ this.GetType().Name })";
+            return $"Player { Player } ({ this.GetType().Name })";
         }
 
     }
