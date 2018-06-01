@@ -13,18 +13,18 @@ namespace ConnectFour.Agents
     {
         private static Random random = new Random();
 
-        public RandomAgent(Token player) : base(player) { }
+        public RandomAgent(Player player) : base(player) { }
 
         // Selects a random column to play based on the board's state
         public override Move GetNextMove(Board board)
         {
             // Guess a random number in range [0, board.Cols - 1]
-            int col = random.Next(0, board.Cols);
+            int col = random.Next(0, board.NumCols);
 
             // Continue guessing if initial guess was invalid (column full)
-            while (board.ColHeight[col] >= board.Rows)
+            while (board.ColHeight[col] >= board.NumRows)
             {
-                col = random.Next(0, board.Cols);
+                col = random.Next(0, board.NumCols);
             }
 
             return new Move(Tok, col);

@@ -11,10 +11,10 @@ namespace ConnectFour
     public abstract class Agent
     {
         // The color of this agent
-        public Token Tok { get; }
+        public Player Tok { get; }
 
         // Base constructor to assign the player's color
-        public Agent(Token color)
+        public Agent(Player color)
         {
             Tok = color;
         }

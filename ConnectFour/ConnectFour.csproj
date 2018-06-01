@@ -53,12 +53,15 @@
     <Compile Include="Gameplay\Game.cs" />
     <Compile Include="Agents\HumanAgent.cs" />
     <Compile Include="Gameplay\Point.cs" />
-    <Compile Include="Token.cs" />
+    <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Scrap.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

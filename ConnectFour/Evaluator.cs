@@ -13,8 +13,8 @@ namespace ConnectFour
 
         static int CalcScoreCol(int col, Board board)
         {
-            int size = board.Rows;
-            Token[] tokens = new Token[size];
+            int size = board.NumRows;
+            Player[] tokens = new Player[size];
             for (int row = 0; row < size; row++)
             {
                 tokens[row] = board.Tokens[col, row];
@@ -25,8 +25,8 @@ namespace ConnectFour
 
         static int CalcScoreRow(int row, Board board)
         {
-            int size = board.Cols;
-            Token[] tokens = new Token[size];
+            int size = board.NumCols;
+            Player[] tokens = new Player[size];
             for (int col = 0; col < size; col++)
             {
                 tokens[row] = board.Tokens[col, row];
@@ -47,7 +47,7 @@ namespace ConnectFour
         }
 
         // Returns a score for possible winning positions in array
-        static int CalcScore(Token[] tokens)
+        static int CalcScore(Player[] tokens)
         {
             int score = 0;
             int redCount = 0;
@@ -59,8 +59,8 @@ namespace ConnectFour
                 // Add a count for the token entering the window
                 switch (tokens[i])
                 {
-                    case Token.Red:  redCount++;  break;
-                    case Token.Yel:  yelCount++;  break;
+                    case Player.Red:  redCount++;  break;
+                    case Player.Yel:  yelCount++;  break;
                 }
 
                 // Assign score for the current four tokens in a moving window
@@ -69,8 +69,8 @@ namespace ConnectFour
                     // Subtract a count for the token departing the window
                     switch (tokens[i - 4])
                     {
-                        case Token.Red:  redCount--;  break;
-                        case Token.Yel:  yelCount--;  break;
+                        case Player.Red:  redCount--;  break;
+                        case Player.Yel:  yelCount--;  break;
                     }
 
                     // Ensure we're counting four tokens max

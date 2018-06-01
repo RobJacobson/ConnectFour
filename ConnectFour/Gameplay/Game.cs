@@ -26,10 +26,10 @@ namespace ConnectFour
 
 
         // Initiates a game and continues until one player wins (or board full)
-        public (Token, Board) Start()
+        public (Player, Board) Start()
         {
             // Iterate through the maximum number of moves
-            for (int turn = 0; turn < board.Cols * board.Rows; turn++)
+            for (int turn = 0; turn < board.NumCols * board.NumRows; turn++)
             {
                 // Get current player (player 1 even moves, player 2 odd)
                 Agent player = (turn % 2 == 0) ? player1 : player2;
@@ -51,7 +51,7 @@ namespace ConnectFour
             }
 
             // Mo winner; game over
-            return (Token.None, board);
+            return (Player.None, board);
         }
         
 
@@ -94,7 +94,7 @@ namespace ConnectFour
                         break;
 
                     case '^':
-                        color = (player.Tok == Token.Red) ? ConsoleColor.Red : ConsoleColor.Yellow;
+                        color = (player.Tok == Player.Red) ? ConsoleColor.Red : ConsoleColor.Yellow;
                         break;
 
                     default:
@@ -135,8 +135,8 @@ namespace ConnectFour
                 {
                     switch (Tokens[col, row])
                     {
-                        case Token.Red:  sb.Append(" O "); break;
-                        case Token.Yel:  sb.Append(" X "); break;
+                        case Player.Red:  sb.Append(" O "); break;
+                        case Player.Yel:  sb.Append(" X "); break;
                         default:         sb.Append(" ■ "); break;
                     }
                 }

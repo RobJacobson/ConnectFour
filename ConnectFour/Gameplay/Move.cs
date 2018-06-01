@@ -9,11 +9,11 @@ namespace ConnectFour.Gameplay
     // Represents an action of inserting player's token into the given column
     public class Move
     {
-        public Token Tok { get; }
+        public Player Tok { get; }
         public int   Col { get; }
         public int   Row { get; set; }
 
-        public Move(Token player, int column)
+        public Move(Player player, int column)
         {
             Tok = player;
             Col = (byte)column;
@@ -28,7 +28,7 @@ namespace ConnectFour.Gameplay
         // Returns the text color for writing this agent's tokens to console
         public ConsoleColor OutputColor()
         {
-            return ((Tok == Token.Red) ? ConsoleColor.Red : ConsoleColor.Yellow);
+            return ((Tok == Player.Red) ? ConsoleColor.Red : ConsoleColor.Yellow);
         }
 
     }
