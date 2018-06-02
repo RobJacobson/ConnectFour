@@ -59,25 +59,51 @@ namespace ConnectFour
         }
 
 
-        // Returns true if we have four-of-kind for row, colum, or either diagonal
+        // Returns true if four-of-kind for row, colum, or either diagonal
         public bool IsWinner(Move move)
         {
-            bool winRow = FourOfKind(move.Token, board.RowEnum(move.Row));
-            bool winCol = FourOfKind(move.Token, board.RowEnum(move.Col));
-            bool winUL  = FourOfKind(move.Token, board.UpLeftDiagEnum(move.Col, move.Row));
-            bool winUR  = FourOfKind(move.Token, board.UpRightDiagEnum(move.Col, move.Row));
+            Color player = move.Token;
+
+            bool winRow = IsWin(player, board.RowIterator(move.Row));
+
+            // Only check row/diagonals if we have more than three tokens in col
+            int maxColHeight = board.ColHeight.Max();
+            if (maxColHeight < 4)
+            {
+                return winRow;
+            }
+            else
+            {
+                bool winCol = IsWin(player, board.ColumnIterator(move.Col));
+                bool winUR  = IsWin(player, board.UpRightDiagIterator()
+                bool winUL  = IsWin(player, board.UpLeftDiagEnum(move.Col, move.Row));
+
+            }
+
+            // Check this column if it has a height above three.
+            if (board.ColHeight[move.Col] > 3)
+            {
+                winCol = IsWin(player, board.ColumnIterator(move.Col));
+            }
+
+            // Only check each diagonal if board's max column height is above three
+            int maxHeight = board.ColHeight.Max();
+            if (maxHeight > 3)
+            {
+                winUR = FourOfKind(player, board.UpRightDiagEnum(move.Col, move.Row));
+            }
 
             return (winRow || winCol || winUL || winUR);
         }
 
 
         // Returns true if the specified range has four-in-row of player's color
-        public bool FourOfKind(Color player, IEnumerable<Color> range)
+        public bool IsWin(Color player, IEnumerable<Square> range)
         {
             int matches = 0;
-            foreach (Color token in range)
+            foreach (Square square in range)
             {
-                if (token == player)
+                if (square.Token == player)
                 {
                     matches++;
                     if (matches == 4)
