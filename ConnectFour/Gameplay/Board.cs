@@ -71,7 +71,7 @@ namespace ConnectFour.Gameplay
 
 
         // Returns iterator for squares in the given column (bottom to top)
-        public IEnumerable<Color> ColumnIterator(int col)
+        public IEnumerable<Color> Column(int col)
         {
             // Iterate from bottom to top and return each square
             for (int row = 0; row < Height; row++)
@@ -82,7 +82,7 @@ namespace ConnectFour.Gameplay
 
 
         // Returns iterator for squares in the given row (left to right)
-        public IEnumerable<Color> RowIterator(int row)
+        public IEnumerable<Color> Row(int row)
         {
             // Iterate from left to right and return each square
             for (int col = 0; col < Width; col++)

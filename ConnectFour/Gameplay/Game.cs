@@ -60,8 +60,8 @@ namespace ConnectFour
         // Returns true if player has four-in-row in column, row or diagonals
         private bool Success(Move move)
         {
-            bool winRow = FourInRow(move.Token, board.RowIterator(move.Row));
-            bool winCol = FourInRow(move.Token, board.ColumnIterator(move.Col));
+            bool winRow = FourInRow(move.Token, board.Row(move.Row));
+            bool winCol = FourInRow(move.Token, board.Column(move.Col));
             bool winURD = FourInRow(move.Token, board.DiagonalUR(move.Col, move.Row));
             bool winULD = FourInRow(move.Token, board.DiagonalUL(move.Col, move.Row));
 
