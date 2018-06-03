@@ -53,7 +53,7 @@
     <Compile Include="Gameplay\Board.cs" />
     <Compile Include="Gameplay\Game.cs" />
     <Compile Include="Agents\HumanAgent.cs" />
-    <Compile Include="Color.cs" />
+    <Compile Include="Gameplay\Color.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
