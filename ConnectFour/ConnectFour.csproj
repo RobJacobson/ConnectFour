@@ -44,10 +44,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Agents\Agent.cs" />
     <Compile Include="Agents\ProgrammedAgent.cs" />
     <Compile Include="Agents\RandomAgent.cs" />
     <Compile Include="Evaluator.cs" />
-    <Compile Include="Gameplay\Agent.cs" />
     <Compile Include="Gameplay\Move.cs" />
     <Compile Include="Gameplay\Board.cs" />
     <Compile Include="Gameplay\Game.cs" />
@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

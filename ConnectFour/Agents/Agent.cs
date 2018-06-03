@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ConnectFour.Gameplay;
 
-namespace ConnectFour
+namespace ConnectFour.Agents
 {
     // Abstract base class for agent
     public abstract class Agent
@@ -45,7 +45,7 @@ namespace ConnectFour
         }
 
 
-        // Counts the player's tokens in the given array slice
+        // Counts the given player's tokens in the given array slice
         public int Count(Color player, IEnumerable<Color> slice)
         {
             int count = 0;
