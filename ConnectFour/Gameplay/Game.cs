@@ -11,12 +11,12 @@ namespace ConnectFour
     {
         private readonly Board board;
         private readonly Stack<Move> moves;
-        private readonly AbstractAgent player1;
-        private readonly AbstractAgent player2;
+        private readonly Agent player1;
+        private readonly Agent player2;
 
 
         // Initialize game with specified agents and board dimensions
-        public Game(AbstractAgent player1, AbstractAgent player2, int cols, int rows)
+        public Game(Agent player1, Agent player2, int cols, int rows)
         {
             this.player1 = player1;
             this.player2 = player2;
@@ -29,26 +29,24 @@ namespace ConnectFour
         public (Color, Board) Start()
         {
             // Iterate through the maximum number of moves
-            for (int turn = 0; turn < board.NumCols * board.NumRows; turn++)
+            for (int turn = 0; turn < board.Width * board.Height; turn++)
             {
-                // Get current player (player 1 for even moves, player 2 odd)
-                AbstractAgent player = (turn % 2 == 0) ? player1 : player2;
+                // Get the agent for current ploayer (player 1 even moves, player 2 odd)
+                Agent player = (turn % 2 == 0) ? player1 : player2;
 
-                // Get the next move and simulate dropping token into column
-                int col = player.GetNextColumn(board);
+                // Get the next column from current agent and drop token into column
+                int col = player.GetNextMove(board);
                 int row = board.Insert(player.Color, col);
 
                 // Add this move to the move stack
-                Move move = new Move(player.Color, col, row);
+                Move move = new Move(player.Color, col, row, turn);
                 moves.Push(move);
 
                 // Draw updated board
-                Console.WriteLine($"Turn {turn}, {player} ==> ({move.Col}, {move.Row})");
-                Console.WriteLine(board);
-                Console.WriteLine();
+                Show(move);
 
                 // Goal test: End game if this action results in four-in-a-row
-                if (IsWinner(move))
+                if (Success(move))
                 {
                     return (player.Color, board);
                 }
@@ -58,52 +56,26 @@ namespace ConnectFour
             return (Color.None, board);
         }
 
-
-        // Returns true if four-of-kind for row, colum, or either diagonal
-        public bool IsWinner(Move move)
+       
+        // Returns true if player has four-in-row in column, row or diagonals
+        private bool Success(Move move)
         {
-            Color player = move.Token;
+            bool winRow = FourInRow(move.Token, board.RowIterator(move.Row));
+            bool winCol = FourInRow(move.Token, board.ColumnIterator(move.Col));
+            bool winURD = FourInRow(move.Token, board.DiagonalUR(move.Col, move.Row));
+            bool winULD = FourInRow(move.Token, board.DiagonalUL(move.Col, move.Row));
 
-            bool winRow = IsWin(player, board.RowIterator(move.Row));
-
-            // Only check row/diagonals if we have more than three tokens in col
-            int maxColHeight = board.ColHeight.Max();
-            if (maxColHeight < 4)
-            {
-                return winRow;
-            }
-            else
-            {
-                bool winCol = IsWin(player, board.ColumnIterator(move.Col));
-                bool winUR  = IsWin(player, board.UpRightDiagIterator()
-                bool winUL  = IsWin(player, board.UpLeftDiagEnum(move.Col, move.Row));
-
-            }
-
-            // Check this column if it has a height above three.
-            if (board.ColHeight[move.Col] > 3)
-            {
-                winCol = IsWin(player, board.ColumnIterator(move.Col));
-            }
-
-            // Only check each diagonal if board's max column height is above three
-            int maxHeight = board.ColHeight.Max();
-            if (maxHeight > 3)
-            {
-                winUR = FourOfKind(player, board.UpRightDiagEnum(move.Col, move.Row));
-            }
-
-            return (winRow || winCol || winUL || winUR);
+            return (winRow || winCol || winURD || winULD);
         }
+        
 
-
-        // Returns true if the specified range has four-in-row of player's color
-        public bool IsWin(Color player, IEnumerable<Square> range)
+        // Returns true if given array slice contains four-in-a-row for player
+        public bool FourInRow(Color player, IEnumerable<Color> slice)
         {
             int matches = 0;
-            foreach (Square square in range)
+            foreach (Color token in slice)
             {
-                if (square.Token == player)
+                if (token == player)
                 {
                     matches++;
                     if (matches == 4)
@@ -115,58 +87,40 @@ namespace ConnectFour
                 {
                     matches = 0;
                 }
+
             }
             return false;
         }
 
-
-
-        // Prints colorized board to console
-        public void Show(AbstractAgent player)
+        
+        // Prints an ASCII-art representation of board in color to console
+        public void Show(Move move)
         {
-            string output = this.ToString();
-
-            foreach (char c in output)
+            // Iterate through each character in ASCII art
+            foreach (char c in board.ToStringASCII())
             {
-                ConsoleColor color;
+                // Select appropriate color for character and print to console
+                ConsoleColor foreground;
                 switch (c)
                 {
-                    case 'O':
-                        color = ConsoleColor.Red;
-                        break;
-
-                    case 'X':
-                        color = ConsoleColor.Yellow;
-                        break;
-
-                    case '■':
-                        color = ConsoleColor.DarkBlue;
-                        break;
-
-                    case '^':
-                        color = (player.Color == Color.Red) ? ConsoleColor.Red : ConsoleColor.Yellow;
-                        break;
-
-                    default:
-                        color = ConsoleColor.DarkGray;
-                        break;
+                    case 'O': foreground = ConsoleColor.Red; break;
+                    case 'X': foreground = ConsoleColor.Yellow; break;
+                    default:  foreground = ConsoleColor.DarkBlue; break;
                 }
-                Console.ForegroundColor = color;
+                Console.ForegroundColor = foreground;
                 Console.Write(c);
             }
-
             Console.ResetColor();
+
+            // Print a caret to show the most-recent move
+            Console.ForegroundColor = (move.Token == Color.Red) ? ConsoleColor.Red : ConsoleColor.Yellow;
+            Console.WriteLine(new String(' ', 9 + move.Col * 3) + '^');
+
+            // Display a textual summary of the move
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine(move);
+            Console.WriteLine();
         }
-
-
-        //// Returns a list of the column numbers for each move from this agent
-        //public List<int> MovesByPlayer(Agent player)
-        //{
-        //    return Moves.Reverse()
-        //                .Where(move => move.Tok == player.Tok)
-        //                .Select(move => move.Col)
-        //                .ToList();
-        //}
 
     }
 }

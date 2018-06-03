@@ -47,13 +47,12 @@
     <Compile Include="Agents\ProgrammedAgent.cs" />
     <Compile Include="Agents\RandomAgent.cs" />
     <Compile Include="Evaluator.cs" />
+    <Compile Include="Gameplay\Agent.cs" />
     <Compile Include="Gameplay\Move.cs" />
     <Compile Include="Gameplay\Board.cs" />
-    <Compile Include="Gameplay\AbstractAgent.cs" />
     <Compile Include="Gameplay\Game.cs" />
     <Compile Include="Agents\HumanAgent.cs" />
-    <Compile Include="Gameplay\Point.cs" />
-    <Compile Include="Player.cs" />
+    <Compile Include="Color.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

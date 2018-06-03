@@ -6,30 +6,26 @@ using System.Threading.Tasks;
 
 namespace ConnectFour.Gameplay
 {
-    // Struct to represent one token on board at given (col, row) coordinates
-    public struct Move
+    // Class to represent each move in a game
+    public class Move
     {
-        public Color Token  { get; }
-        public byte  Col    { get; }
-        public byte  Row    { get; }
+        public Color Token { get; }
+        public int   Col   { get; }
+        public int   Row   { get; }
+        public int   Turn  { get; }
 
         // Constructs a new Move struct
-        public Move(Color token, int col, int row)
+        public Move(Color token, int col, int row, int turn)
         {
             Token = token;
-            Col = (byte)col;
-            Row = (byte)row;
+            Col = col;
+            Row = row;
+            Turn = turn;
         }
 
         public override string ToString()
         {
-            return $"{ Token } --> ({ Col }, { Row })";
-        }
-
-        // Returns the corresponding console color this player
-        public ConsoleColor OutputColor()
-        {
-            return ((Token == Color.Red) ? ConsoleColor.Red : ConsoleColor.Yellow);
+            return $"{ Turn }: { Token } => ({ Col }, { Row })";
         }
 
     }

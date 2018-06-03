@@ -8,13 +8,13 @@ using ConnectFour.Gameplay;
 namespace ConnectFour.Agents
 {
     // Determines next move by promting human player to select a column
-    public class HumanAgent : AbstractAgent
+    public class HumanAgent : Agent
     {
         // Call base constructor
         public HumanAgent(Color player) : base(player) { }
 
         // Override GetNextMove with custom logic
-        public override int GetNextColumn(Board board)
+        public override int GetNextMoveDerived(Board board)
         {
             // Prompt for input
             Console.Write($"{base.Color,-8}> ");

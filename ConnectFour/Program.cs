@@ -23,8 +23,8 @@ namespace ConnectFour
                 // Agent player2 = new ProgrammedAgent(Token.Yellow, new int[] { 1, 0, 6, 2, 0, 1, 6, 2, 4, 1, 3, 0, 4, 5, 2, 6, 0, 3, 2, 3, 4 });
 
                 // Construct random agents (no intelligence)
-                AbstractAgent player1 = new RandomAgent(Color.Red);
-                AbstractAgent player2 = new RandomAgent(Color.Yel);
+                Agent player1 = new RandomAgent(Color.Red);
+                Agent player2 = new RandomAgent(Color.Yel);
 
                 // Identify players
                 Console.WriteLine($"New game: { player1 } vs { player2 }");

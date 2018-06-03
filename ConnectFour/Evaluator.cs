@@ -13,7 +13,7 @@ namespace ConnectFour
 
         static int CalcScoreCol(int col, Board board)
         {
-            int size = board.NumRows;
+            int size = board.Height;
             Color[] tokens = new Color[size];
             for (int row = 0; row < size; row++)
             {
@@ -25,7 +25,7 @@ namespace ConnectFour
 
         static int CalcScoreRow(int row, Board board)
         {
-            int size = board.NumCols;
+            int size = board.Width;
             Color[] tokens = new Color[size];
             for (int col = 0; col < size; col++)
             {
