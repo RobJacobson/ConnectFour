@@ -10,10 +10,10 @@ namespace ConnectFour.Agents
     // Abstract base class for agent
     public abstract class Agent
     {
-        // The color of this agent
+        // The token color for this agent
         public Color Color { get; }
 
-        // A list of every move (by column number)
+        // A list of every move from this agent (by column number)
         public List<int> Moves { get; }
 
 
