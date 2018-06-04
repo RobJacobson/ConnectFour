@@ -110,7 +110,7 @@ namespace ConnectFour.Agents
         }
 
 
-        public Action MinAction(Board board, int depth)
+        public Action[] MinAction(Board board, int depth)
         {
             IterationsCount++;
 

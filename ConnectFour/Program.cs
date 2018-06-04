@@ -24,7 +24,7 @@ namespace ConnectFour
             char verbose = PromptChar(SHOW, new char[] { 'y', 'n' });
 
             // Start main game-play loop
-            Play(p1Type, p2Type, verbose == 'y');
+            Play(p1Type, p2Type, (verbose == 'y'));
         }
 
         private static void Play(string p1Type, string p2Type, bool verbose)
@@ -37,6 +37,7 @@ namespace ConnectFour
             while (true)
             {
                 // Define the two agent types and seed their shared RNG
+                // (This allows us to 
                 Agent player1 = AgentFactory(p1Type, Color.Red);
                 Agent player2 = AgentFactory(p2Type, Color.Yel);
                 Agent.Reseed(seed);
@@ -52,7 +53,7 @@ namespace ConnectFour
                 char keypress = PromptChar(END, new char[] { 'r', 'n', 'q' });
                 Console.WriteLine();
 
-                // Get new seed for new game (but not for replay), or quit
+                // Process 
                 switch (keypress)
                 {
                     case 'n': seed = randomSeed.Next(); break;
@@ -88,7 +89,7 @@ namespace ConnectFour
                 Console.Write(prompt + "  > ");
                 response = Char.ToLower(Console.ReadKey().KeyChar);
                 Console.WriteLine();
-            } while (validChars.Any(c => c == response));
+            } while (!validChars.Any(c => c == response));
             return response;
         }
 
