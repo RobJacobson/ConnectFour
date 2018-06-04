@@ -21,7 +21,7 @@ namespace ConnectFour
             string p2Type = args[1];
 
             // Determine whether to use verbose mode (printing each move)
-            char verbose = DoPrompt(SHOW, new char[] { 'y', 'n' });
+            char verbose = PromptChar(SHOW, new char[] { 'y', 'n' });
 
             // Start main game-play loop
             Play(p1Type, p2Type, verbose == 'y');
@@ -49,7 +49,7 @@ namespace ConnectFour
                 ShowResult(winner);
 
                 // Prompt for next game options (new game, replay, or quit)
-                char keypress = DoPrompt(END, new char[] { 'r', 'n', 'q' });
+                char keypress = PromptChar(END, new char[] { 'r', 'n', 'q' });
                 Console.WriteLine();
 
                 // Get new seed for new game (but not for replay), or quit
@@ -80,7 +80,7 @@ namespace ConnectFour
 
 
         // Shows prompt, waits for valid keypress, and returns keypress
-        private static char DoPrompt(string prompt, char[] validChars)
+        private static char PromptChar(string prompt, char[] validChars)
         {
             char response;
             do
@@ -88,17 +88,39 @@ namespace ConnectFour
                 Console.Write(prompt + "  > ");
                 response = Char.ToLower(Console.ReadKey().KeyChar);
                 Console.WriteLine();
-            } while (!validChars.Any(c => c == response));
+            } while (validChars.Any(c => c == response));
             return response;
         }
+
+
+        // Shows prompt and returns integer from keyboard
+        private static int PromptInt(string prompt)
+        {
+            string response;
+            int result;
+            do
+            {
+                Console.Write(prompt + "  > ");
+                response = Console.ReadLine();
+            } while (Int32.TryParse(response, out result));
+            return result;
+        }
+
 
         // Factory method to construct agent from command-line parameter
         private static Agent AgentFactory(string type, Color token)
         {
             switch (type)
             {
-                case "Human":   return new HumanAgent(token);
-                case "Random":  return new RandomAgent(token);
+                case "Human":
+                    return new HumanAgent(token);
+
+                case "Random":
+                    return new RandomAgent(token);
+
+                case "Minimax":
+                    int plies = PromptInt("   Ply depth for MiniMax:");
+                    return new MinimaxAgent(token, plies);
             }
             throw new ArgumentException($"Invalid agent name: { type }");
         }

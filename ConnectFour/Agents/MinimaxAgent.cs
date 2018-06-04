@@ -7,7 +7,7 @@ using ConnectFour.Gameplay;
 
 namespace ConnectFour.Agents
 {
-    abstract class MinimaxAgent : Agent
+    class MinimaxAgent : Agent
     {
 
         // Define an inner class to store each action
@@ -68,6 +68,48 @@ namespace ConnectFour.Agents
         }
 
 
+        public Action MaxAction(Board board, int depth)
+        {
+            // Increment counter for diagnostics
+            IterationsCount++;
+
+            // Return the heuristic value if we've run out of ply depth
+            if (depth == 0)
+            {
+                return new Action(-1, Heuristic(board));
+            }
+
+            // Initialize best value to "negative infinity"
+            Action best = new Action(-1, int.MinValue);
+
+            // Iterate through each available action (i.e., non-full columns)
+            depth--;
+            foreach (int col in board.GetActions())
+            {
+                // Place token in column, test success, recurse down if needed
+                bool success = board.Insert(Token, col);
+                if (success)
+                {
+                    best = new Action(-1, int.MaxValue);
+                }
+                else
+                {
+                    Action worst = MinAction(board, depth);
+                    if (worst.Val > best.Val)
+                    {
+                        best = new Action(col, worst.Val);
+                    }
+                }
+                board.Remove(col);
+
+                // Abort loop if we found success
+                if (success) { continue; }
+
+            }
+            return best;
+        }
+
+
         public Action MinAction(Board board, int depth)
         {
             IterationsCount++;
@@ -94,47 +136,6 @@ namespace ConnectFour.Agents
                 else
                 {
                     Action worst = MaxAction(board, depth);
-                    if (worst.Val > best.Val)
-                    {
-                        best = new Action(col, worst.Val);
-                    }
-                }
-                board.Remove(col);
-
-                // Abort loop if we found success
-                if (success) { break; }
-
-            }
-            return best;
-        }
-
-        public Action MaxAction(Board board, int depth)
-        {
-            // Increment counter for diagnostics
-            IterationsCount++;
-
-            // Return the heuristic value if we've run out of ply depth
-            if (depth == 0)
-            {
-                return new Action(-1, Heuristic(board));
-            }
-
-            // Initialize best value to "positive infinity"
-            Action best = new Action(-1, int.MaxValue);
-
-            // Iterate through each available action (i.e., non-full columns)
-            depth--;
-            foreach (int col in board.GetActions())
-            {
-                // Place token in column, test success, recurse down if needed
-                bool success = board.Insert(Token, col);
-                if (success)
-                {
-                    best = new Action(-1, int.MaxValue);
-                }
-                else
-                {
-                    Action worst = MinAction(board, depth);
                     if (worst.Val > best.Val)
                     {
                         best = new Action(col, worst.Val);
