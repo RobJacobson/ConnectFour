@@ -39,7 +39,7 @@ namespace ConnectFour
                 // Define the two agent types and seed their shared RNG
                 Agent player1 = AgentFactory(p1Type, Color.Red);
                 Agent player2 = AgentFactory(p2Type, Color.Yel);
-                Agent.SeedRNG(seed);
+                Agent.Reseed(seed);
 
                 // Create new game on standard 7 x 6 board
                 GameEngine game = new GameEngine(player1, player2, 7, 6);

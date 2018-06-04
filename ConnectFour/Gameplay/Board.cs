@@ -11,26 +11,33 @@ namespace ConnectFour.Gameplay
     // Represents game baord as a 2D array with stack-like columns
     public class Board
     {
-        // Width of board in columns
+        // Overall width of board in columns
         public int Width { get; }
 
-        // Maximum height of board in rows
+        // Overall height of board in rows
         public int Height { get; }
 
-        // Array for each column's current height in tokens (top of stack)
+        // Array for current number of tokens in each column (top of stack)
         public int[] ColHeight { get; private set; }
 
         // 2D array of token colors (red, yellow or blank) to represent board
         public Color[,] Grid { get; }
 
+        // Capacity of board (total number of positions on entire board)
+        public int Capacity { get; }
+
+        // Count of tokens (total number currently on entire board)
+        public int NumTokens { get; private set; }
 
         // Constructs an empty Connect-Four board with the given dimensions
         public Board(int width, int height)
         {
-            Width = width;
-            Height = height;
+            Width     = width;
+            Height    = height;
             ColHeight = new int[width];
-            Grid = new Color[width, height];
+            Grid      = new Color[width, height];
+            NumTokens = 0;
+            Capacity  = width * height;
         }
 
 
@@ -46,10 +53,25 @@ namespace ConnectFour.Gameplay
                 }
                 else
                 {
-                    // Return color at given position
+                    // Return color at the given coordinates
                     return Grid[col, row];
                 }
             }
+        }
+
+
+        // Returns a list of the indexes for each playable (non-full) column
+        public List<int> GetActions()
+        {
+            var result = new List<int>(Width);
+            for (int col = 0; col < Width; col++)
+            {
+                if (ColHeight[col] < Height)
+                {
+                    result.Add(col);
+                }
+            }
+            return result;
         }
 
 
@@ -59,9 +81,10 @@ namespace ConnectFour.Gameplay
             // Insert token at top of column stack
             int row = ColHeight[col]++;
             Grid[col, row] = token;
+            NumTokens++;
 
             // Return true if we have a winning position
-            return Success(token, col, row);
+            return Success(token, col);
         }
 
 
@@ -70,25 +93,28 @@ namespace ConnectFour.Gameplay
         {
             int row = ColHeight[col]--;
             Grid[col, row] = Color.None;
+            NumTokens--;
         }
 
         // Returns true if board has four repeated tokens in col, row, or diag
         // (Only tests rows, cols and diags that intersect with new token)
-        private bool Success(Color token, int col, int row)
+        public bool Success(Color token, int col)
         {
-            //// Test array slice of current row
-            //bool winRow = FourInRow(token, this.Row(row));
+            // Get row of last token in column
+            int row = ColHeight[col] - 1;
 
-            //// Test array slice of current column
-            //bool winCol = FourInRow(token, this.Column(col));
+            // Test array slice of current row
+            bool winRow = FourInRow(token, this.Row(row));
+
+            // Test array slice of current column
+            bool winCol = FourInRow(token, this.Column(col));
 
             // Test array slices of current diagonals (up-right and up-left)
             bool winURD = FourInRow(token, this.DiagonalUR(col, row));
             bool winULD = FourInRow(token, this.DiagonalUL(col, row));
 
             // Return true if we have four-in-a-row in any direction
-            //            return (winRow || winCol || winURD || winULD);
-            return (winURD || winULD);
+            return (winRow || winCol || winURD || winULD);
         }
 
 

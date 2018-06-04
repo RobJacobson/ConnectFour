@@ -45,11 +45,11 @@ namespace ConnectFour
                 int row = board.ColHeight[col];
 
                 // Record this move
-                Move move = new Move(player.Color, col, row, turn);
+                Move move = new Move(player.Token, col, row, turn);
                 moves.Push(move);
 
                 // Drop token into selected column and test for goal
-                bool winner = board.Insert(player.Color, col);
+                bool winner = board.Insert(player.Token, col);
 
                 // Draw updated board if in 'verbose mode' or game over
                 if (verbose || winner || turn == maxTurns - 1)

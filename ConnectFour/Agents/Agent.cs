@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +12,7 @@ namespace ConnectFour.Agents
     public abstract class Agent
     {
         // The token color for this agent
-        public Color Color { get; }
+        public Color Token { get; }
 
         // A list of every move from this agent (by column number)
         public List<int> Moves { get; }
@@ -19,19 +20,24 @@ namespace ConnectFour.Agents
         // A shared random-number generator for all agents
         protected static Random Randomizer { get; private set; }
 
-
+        // Stopwatch for timing each agent's moves
+        public Stopwatch Clock { get; }
+      
         // Base constructor to assign the player's color
-        public Agent(Color player)
+        public Agent(Color token)
         {
-            Color = player;
+            Token = token;
             Moves = new List<int>();
+            Clock = new Stopwatch();
         }
 
 
         // Base method for initiating next move and storing result
         public int GetNextMove(Board board)
         {
+            Clock.Start();
             int column = GetNextMoveDerived(board);
+            Clock.Stop();
             Moves.Add(column);
             return column;
         }
@@ -44,7 +50,8 @@ namespace ConnectFour.Agents
         // Return string for pretty-print output using derived class's name
         public override string ToString()
         {
-            return $"Player { Color } ({ this.GetType().Name })";
+            string type = this.GetType().Name;
+            return $"Player {Token} ({type})";
         }
 
 
@@ -64,7 +71,7 @@ namespace ConnectFour.Agents
 
 
         // Constructs a new RNG using the specified seed
-        public static void SeedRNG(int seed)
+        public static void Reseed(int seed)
         {
             Agent.Randomizer = new Random(seed);
         }
