@@ -16,6 +16,9 @@ namespace ConnectFour.Agents
         // A list of every move from this agent (by column number)
         public List<int> Moves { get; }
 
+        // A shared random-number generator for all agents
+        protected static Random Randomizer { get; private set; }
+
 
         // Base constructor to assign the player's color
         public Agent(Color player)
@@ -58,6 +61,14 @@ namespace ConnectFour.Agents
             }
             return count;
         }
+
+
+        // Constructs a new RNG using the specified seed
+        public static void SeedRNG(int seed)
+        {
+            Agent.Randomizer = new Random(seed);
+        }
+        
 
     }
 }

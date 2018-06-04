@@ -46,12 +46,11 @@
   <ItemGroup>
     <Compile Include="Agents\Agent.cs" />
     <Compile Include="Agents\MinimaxAgent.cs" />
-    <Compile Include="Agents\ProgrammedAgent.cs" />
     <Compile Include="Agents\RandomAgent.cs" />
     <Compile Include="Evaluator.cs" />
     <Compile Include="Gameplay\Move.cs" />
     <Compile Include="Gameplay\Board.cs" />
-    <Compile Include="Gameplay\Game.cs" />
+    <Compile Include="Gameplay\GameEngine.cs" />
     <Compile Include="Agents\HumanAgent.cs" />
     <Compile Include="Gameplay\Color.cs" />
     <Compile Include="Program.cs" />

@@ -53,20 +53,70 @@ namespace ConnectFour.Gameplay
         }
 
 
-        // Drops player's token into column; returns row of where it lands
-        public int Insert(Color token, int col)
+        // Drops player's token into column; returns record of this move
+        public bool Insert(Color token, int col)
         {
+            // Insert token at top of column stack
             int row = ColHeight[col]++;
             Grid[col, row] = token;
-            return row;
+
+            // Return true if we have a winning position
+            return Success(token, col, row);
         }
 
 
-        // Pops the topmost token from the given column
+        // Pops the topmost token from the given column stack
         public void Remove(int col)
         {
             int row = ColHeight[col]--;
             Grid[col, row] = Color.None;
+        }
+
+        // Returns true if board has four repeated tokens in col, row, or diag
+        // (Only tests rows, cols and diags that intersect with new token)
+        private bool Success(Color token, int col, int row)
+        {
+            //// Test array slice of current row
+            //bool winRow = FourInRow(token, this.Row(row));
+
+            //// Test array slice of current column
+            //bool winCol = FourInRow(token, this.Column(col));
+
+            // Test array slices of current diagonals (up-right and up-left)
+            bool winURD = FourInRow(token, this.DiagonalUR(col, row));
+            bool winULD = FourInRow(token, this.DiagonalUL(col, row));
+
+            // Return true if we have four-in-a-row in any direction
+            //            return (winRow || winCol || winURD || winULD);
+            return (winURD || winULD);
+        }
+
+
+        // Iterates through array slice and tests for four repeat matches
+        public bool FourInRow(Color player, IEnumerable<Color> slice)
+        {
+            // Compare each token in array slice
+            int matches = 0;
+            foreach (Color token in slice)
+            {
+                // Does token match player's color?
+                if (token == player)
+                {
+                    // Yes; return true if we have four repeat matches
+                    matches++;
+                    if (matches == 4)
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    // No; reset count
+                    matches = 0;
+                }
+
+            }
+            return false;
         }
 
 
@@ -94,7 +144,7 @@ namespace ConnectFour.Gameplay
 
         // Returns iterator for the upper-right diagonal for this index
         //
-        // Index = Height - (col + row):
+        // Index = (Height - 1 - row) + col:
         //     
         //  5:  0  1  2  3  4  5  6
         //  4:  1  2  3  4  5  6  7 
@@ -107,7 +157,7 @@ namespace ConnectFour.Gameplay
         public IEnumerable<Color> DiagonalUR(int index)
         {
             // Get the starting coordinates (either left or bottom or edge)
-            int col = (index < Height) ? 0 : Height - index  + 1;
+            int col = (index < Height) ? 0 : index - Height + 1;
             int row = (index < Height) ? Height - index  - 1 : 0;
 
             // Iterate from lower-left to upper-right
@@ -121,7 +171,7 @@ namespace ConnectFour.Gameplay
         // Returns iterator for the upper-right diagonal for these coordinates
         public IEnumerable<Color> DiagonalUR(int col, int row)
         {
-            int index = Height - (col + row);
+            int index = (Height - 1 - row) + col;
             return DiagonalUR(index);
         }
 
@@ -215,6 +265,34 @@ namespace ConnectFour.Gameplay
             sb.AppendLine();
 
             return sb.ToString();
+        }
+
+
+        // Prints a colorized representation of the ASCII-art text to console
+        public void ShowBoard()
+        {
+            // Get ASCII art representation and iterate through each character
+            foreach (char c in this.ToStringASCII())
+            {
+                // Select appropriate color for character and print to console
+                ConsoleColor foreground;
+                switch (c)
+                {
+                    case 'O': foreground = ConsoleColor.Red; break;
+                    case 'X': foreground = ConsoleColor.Yellow; break;
+                    default:  foreground = ConsoleColor.DarkBlue; break;
+                }
+                Console.ForegroundColor = foreground;
+                Console.Write(c);
+            }
+            Console.ResetColor();
+        }
+
+        // Print a caret to show the current column played
+        public void ShowCaret(int col, ConsoleColor color)
+        {
+            Console.ForegroundColor = color;
+            Console.WriteLine(new String(' ', 9 + col * 3) + '^');
         }
 
     }

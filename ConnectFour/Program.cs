@@ -11,52 +11,96 @@ namespace ConnectFour
 {
     class Program
     {
+        const string SHOW = "Display each move? (y or n)";
+        const string END  = "New game? (r to replay, n for new game, q to quit)";
+
         static void Main(string[] args)
         {
+            // Extract commane line parameters
+            string p1Type = args[0];
+            string p2Type = args[1];
+
+            // Determine whether to use verbose mode (printing each move)
+            char verbose = DoPrompt(SHOW, new char[] { 'y', 'n' });
+
+            // Start main game-play loop
+            Play(p1Type, p2Type, verbose == 'y');
+        }
+
+        private static void Play(string p1Type, string p2Type, bool verbose)
+        {
+            // Get the next random seed (lets us replay game with same seed)
+            Random randomSeed = new Random();
+            int seed = randomSeed.Next();
+
+            // Loop for each new or replayed game
             while (true)
             {
-                // Define the two players competing against each other
-                // Agent player1 = new HumanAgent(Token.Red);
-
-                // Construct preprogrammed agents (always play same move, for debugging)
-                // Agent player1 = new ProgrammedAgent(Token.Red, new int[] { 1, 6, 2, 6, 2, 5, 3, 5, 3, 6, 5, 4, 0, 1, 4, 3, 5, 1, 5, 0, 4 });
-                // Agent player2 = new ProgrammedAgent(Token.Yellow, new int[] { 1, 0, 6, 2, 0, 1, 6, 2, 4, 1, 3, 0, 4, 5, 2, 6, 0, 3, 2, 3, 4 });
-
-                // Construct random agents (no intelligence)
-                Agent player1 = new RandomAgent(Color.Red);
-                Agent player2 = new RandomAgent(Color.Yel);
-
-                // Identify players
-                Console.WriteLine($"New game: { player1 } vs { player2 }");
-                Console.WriteLine();
+                // Define the two agent types and seed their shared RNG
+                Agent player1 = AgentFactory(p1Type, Color.Red);
+                Agent player2 = AgentFactory(p2Type, Color.Yel);
+                Agent.SeedRNG(seed);
 
                 // Create new game on standard 7 x 6 board
-                Game game = new Game(player1, player2, 7, 6);
+                GameEngine game = new GameEngine(player1, player2, 7, 6);
 
                 // Play until we get a winner
-                (Color winner, Board board) = game.Start();
+                Move winner = game.Start(verbose);
+                ShowResult(winner);
 
-                // Display winner
+                // Prompt for next game options (new game, replay, or quit)
+                char keypress = DoPrompt(END, new char[] { 'r', 'n', 'q' });
                 Console.WriteLine();
-                if (winner == Color.None)
+
+                // Get new seed for new game (but not for replay), or quit
+                switch (keypress)
                 {
-                    Console.WriteLine("Tie game");
-                }
-                else
-                {
-                    Console.WriteLine($"Player { winner } wins!!!");
+                    case 'n': seed = randomSeed.Next(); break;
+                    case 'q': return;
                 }
 
-                // Output each player's moves by column number
-                //string p1 = String.Join(", ", board.MovesByPlayer(player1));
-                //string p2 = String.Join(", ", board.MovesByPlayer(player2));
-                //Console.WriteLine($"{player1} moves: {p1}");
-                //Console.WriteLine($"{player2} moves: {p2}");
-
-                // Pause before continuing
-                Console.ReadLine();
             }
+        }
 
+
+        // Display winner and prompt for next game options
+        private static void ShowResult(Move winner)
+        {
+            // Display winner
+            if (winner == null)
+            {
+                Console.WriteLine("Tie game");
+            }
+            else
+            {
+                Console.WriteLine($"Player { winner.Token } wins!");
+            }
+            Console.WriteLine();
+        }
+
+
+        // Shows prompt, waits for valid keypress, and returns keypress
+        private static char DoPrompt(string prompt, char[] validChars)
+        {
+            char response;
+            do
+            {
+                Console.Write(prompt + "  > ");
+                response = Char.ToLower(Console.ReadKey().KeyChar);
+                Console.WriteLine();
+            } while (!validChars.Any(c => c == response));
+            return response;
+        }
+
+        // Factory method to construct agent from command-line parameter
+        private static Agent AgentFactory(string type, Color token)
+        {
+            switch (type)
+            {
+                case "Human":   return new HumanAgent(token);
+                case "Random":  return new RandomAgent(token);
+            }
+            throw new ArgumentException($"Invalid agent name: { type }");
         }
 
     }

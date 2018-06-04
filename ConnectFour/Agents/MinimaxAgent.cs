@@ -9,26 +9,40 @@ namespace ConnectFour.Agents
 {
     abstract class MinimaxAgent : Agent
     {
-        private int minmaxIterations = 0;
+        public int IterationsTurn { get; private set; }
+        public int IterationsTotal { get; private set; }
+        public int PlyDepth { get; }
 
         // Override base constructor
-        public MinimaxAgent(Color player) : base(player) { }
+        public MinimaxAgent(Color player, int plyDepth) : base(player)
+        {
+            PlyDepth = plyDepth;
+        }
 
+
+        // Returns next move using MinMax search with varying heuristics
         public override int GetNextMoveDerived(Board board)
         {
-            minmaxIterations++;
+            IterationsTurn = 0;
             throw new NotImplementedException();
         }
 
 
-        // Unique implementation of heuristic for each derived MinMax agent
+        public int Min(Board board, int depth)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        // Unique heuristic to be implemented by each derived MinMaxAgent
         public abstract int Heuristic(Board board);
 
 
-        // Show the total number of MinMax iterations for each derived agent
+        // Show the number of MinMax iterations for each derived agent
         public override string ToString()
         {
-            return base.ToString() + $", Iterations: " + minmaxIterations;
+            string iterations = $", { IterationsTurn }, { IterationsTotal }";
+            return base.ToString() + iterations;
         }
     }
 
