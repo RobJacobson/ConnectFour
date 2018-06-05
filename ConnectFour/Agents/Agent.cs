@@ -32,7 +32,7 @@ namespace ConnectFour.Agents
         }
 
 
-        // Base method for initiating next move and storing result
+        // Requests and returns next column number to play from derived agent
         public int GetNextMove(Board board)
         {
             Clock.Start();

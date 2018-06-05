@@ -14,8 +14,8 @@ namespace ConnectFour.Agents
         public class Action
         {
             // Define read-only constructors for the column move and score
-            public int Move { get; set; }
-            public int Score { get; set; }
+            public int   Move  { get; set; }
+            public int   Score { get; set; }
             public Color Token { get; }
 
             // Define constructor
@@ -179,65 +179,6 @@ namespace ConnectFour.Agents
             }
             return best;
         }
-
-
-        //// Runs Max algorithm if maxing, or Min algorithm otherwise
-        //public Action Minimax(Board board, int depth, bool maxing)
-        //{
-        //    // Count each iteration of Minimax
-        //    IterationsCount++;
-
-        //    // Get relevant values depending on whether we're maxing or minning
-        //    int minVal  = (maxing) ? int.MinValue : int.MaxValue;
-        //    int maxVal  = (maxing) ? int.MaxValue : int.MinValue;
-        //    Color token = (maxing) ? Color.Red    : Color.Yel;
-
-        //    // Start by assuming a worst-case result
-        //    Action best = new Action(-1, minVal, token);
-
-        //    // Get the score for each possible move and return our best move
-        //    foreach (int move in board.GetActions())
-        //    {
-        //        int moveScore;
-
-        //        // Drop the token in this column and check for victory
-        //        bool success = board.Insert(Color.Red, move);
-        //        if (success)
-        //        {
-        //            // Winning condition; record max score
-        //            moveScore = maxVal;
-        //        }
-        //        else if (depth == 0)
-        //        {
-        //            // Out of search space; guess score based on heuristic
-        //            moveScore = Heuristic(board, move);
-        //        }
-        //        else
-        //        {
-        //            // Get opposing player's next move if we take this move
-        //            moveScore = Minimax(board, depth - 1, !maxing).Score;
-        //        }
-
-        //        // Clean up by removing the token
-        //        board.Remove(move);
-
-        //        // If this is the best move so far, record it
-        //        if (moveScore > best.Score)
-        //        {
-        //            best.Score = moveScore;
-        //            best.Move = move;
-        //        }
-
-        //        // Break out of loop if we've found winning move
-        //        if (success)
-        //        {
-        //            continue;
-        //        }
-        //    }
-
-        //    // Return the best move we found
-        //    return best;
-        //}
 
     }
 }
