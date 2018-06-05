@@ -111,6 +111,7 @@ namespace ConnectFour
         // Factory method to return 5agent from command-line parameter
         private static Agent AgentFactory(string type, Color token)
         {
+            int plies = 0;
             switch (type)
             {
                 case "Human":
@@ -120,8 +121,13 @@ namespace ConnectFour
                     return new RandomAgent(token);
 
                 case "Minimax":
-                    int plies = PromptInt("   Ply depth for MiniMax:");
-                    return new MinimaxAgent(token, plies);
+                    plies = PromptInt("   Ply depth for MiniMax:");
+                    return new MinimaxAgent(token, plies, 0.99);
+                    break;
+
+                case "MinimaxRandom":
+                    plies = PromptInt("   Ply depth for MiniMax:");
+                    return new MinimaxRandomAgent(token, plies, 0.99);
 
             }
             throw new ArgumentException($"Invalid agent name: { type }");

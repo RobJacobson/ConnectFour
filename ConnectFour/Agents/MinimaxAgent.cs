@@ -36,12 +36,15 @@ namespace ConnectFour.Agents
         // Total count of iterations of MinVal or MaxVal
         public int MinimaxCount { get; private set; }
         public int PlyDepth { get; }
+        public double Decay { get; }
 
 
         // Overrides the base constructor
-        public MinimaxAgent(Color player, int plyDepth) : base(player)
+        public MinimaxAgent(Color player, int plyDepth, double decay)
+            : base(player)
         {
             PlyDepth = plyDepth;
+            Decay = decay;
         }
 
 
@@ -165,6 +168,9 @@ namespace ConnectFour.Agents
                     Action worst = Max(board, depth - 1);
                     score = worst.Score;
                 }
+
+                // Apply a decay rate to scores to give higher priority to quick moves
+                score = (int)(score * Decay);
 
                 // Determine whether this move is better than best move so far
                 if (best.Score > score)
