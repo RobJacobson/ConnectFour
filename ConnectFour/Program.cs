@@ -123,7 +123,6 @@ namespace ConnectFour
                 case "Minimax":
                     plies = PromptInt("   Ply depth for MiniMax:");
                     return new MinimaxAgent(token, plies, 0.99);
-                    break;
 
                 case "MinimaxRandom":
                     plies = PromptInt("   Ply depth for MiniMax:");
