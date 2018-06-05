@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Agents\Agent.cs" />
     <Compile Include="Agents\MinimaxAgent.cs" />
+    <Compile Include="Agents\MinimaxRandomAgent.cs" />
     <Compile Include="Agents\RandomAgent.cs" />
     <Compile Include="Evaluator.cs" />
     <Compile Include="Gameplay\Move.cs" />

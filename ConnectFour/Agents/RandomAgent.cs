@@ -24,7 +24,7 @@ namespace ConnectFour.Agents
             // Continue guessing if initial guess was invalid (column full)
             while (board.ColHeight[col] >= board.Height)
             {
-                col = Agent.Randomizer.Next(0, board.Width);
+                col = Agent.Randomizer.Next(int.MinValue, int.MaxValue);
             }
 
             return col;

@@ -45,7 +45,7 @@ namespace ConnectFour.Agents
         }
 
 
-        // Returns next move based on Minimax algorithm with heuristics
+        // Returns next column move based on Minimax algorithm with heuristics
         public override int GetNextMoveDerived(Board board)
         {
             // Is this the first move?
@@ -157,7 +157,7 @@ namespace ConnectFour.Agents
                 if (success || depth == 0)
                 {
                     // Get best value if we found winning state, else use heuristic
-                    score = (success) ? int.MaxValue : Heuristic(board, move);
+                    score = (success) ? int.MinValue : Heuristic(board, move);
                 }
                 else
                 {
