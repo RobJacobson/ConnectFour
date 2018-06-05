@@ -103,12 +103,12 @@ namespace ConnectFour
             {
                 Console.Write(prompt + "  > ");
                 response = Console.ReadLine();
-            } while (Int32.TryParse(response, out result));
+            } while (!Int32.TryParse(response, out result));
             return result;
         }
 
 
-        // Factory method to construct agent from command-line parameter
+        // Factory method to return 5agent from command-line parameter
         private static Agent AgentFactory(string type, Color token)
         {
             switch (type)
@@ -122,6 +122,7 @@ namespace ConnectFour
                 case "Minimax":
                     int plies = PromptInt("   Ply depth for MiniMax:");
                     return new MinimaxAgent(token, plies);
+
             }
             throw new ArgumentException($"Invalid agent name: { type }");
         }

@@ -91,7 +91,8 @@ namespace ConnectFour.Gameplay
         // Pops the topmost token from the given column stack
         public void Remove(int col)
         {
-            int row = ColHeight[col]--;
+            ColHeight[col]--;
+            int row = ColHeight[col];
             Grid[col, row] = Color.None;
             NumTokens--;
         }
