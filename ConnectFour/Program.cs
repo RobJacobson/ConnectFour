@@ -11,52 +11,72 @@ namespace ConnectFour
 {
     class Program
     {
-        const string SHOW = "Display each move? (y or n)";
-        const string END  = "New game? (r to replay, n for new game, q to quit)";
+
+
+        const string SHOW_MOVE_MESSAGE = "Display each move? (y or n)";
+        const string END_GAME_MESSAGE = "New game? (r to replay, n for new game, a to repick agent, q to quit)";
+
+        static string[] SELECT_AGENT_MESSAGE =
+        {
+            "",
+            "  Select player agent:",
+            "    1. Random-move agent",
+            "    2. Minimax agent, no heuristic",
+            "    3. Minimax agent, random heuristic",
+            "    4. Puny human",
+
+        };
+
 
         static void Main(string[] args)
         {
-            // Extract commane line parameters
-            string p1Type = args[0];
-            string p2Type = args[1];
 
             // Determine whether to use verbose mode (printing each move)
-            char verbose = PromptChar(SHOW, new char[] { 'y', 'n' });
+            char verbose = PromptChar(SHOW_MOVE_MESSAGE, new char[] { 'y', 'n' });
+            Console.WriteLine();
 
+            // Prompt for type of each agent and create agents
+            Agent agent1 = SelectAgent("Red", Color.Red);
+            Agent agent2 = SelectAgent("Yellow", Color.Yel);
+            
             // Start main game-play loop
-            Play(p1Type, p2Type, (verbose == 'y'));
+            Play(agent1, agent2, (verbose == 'y'));
         }
 
-        private static void Play(string p1Type, string p2Type, bool verbose)
+
+        private static void Play(Agent agent1, Agent agent2, bool verbose)
         {
-            // Get the next random seed (lets us replay game with same seed)
+            // Get next random seed (lets us replay game by reusing same seed)
             Random randomSeed = new Random();
             int seed = randomSeed.Next();
 
             // Loop for each new or replayed game
             while (true)
             {
-                // Define the two agent types and seed their shared RNG
-                // (This allows us to 
-                Agent player1 = AgentFactory(p1Type, Color.Red);
-                Agent player2 = AgentFactory(p2Type, Color.Yel);
+                // Update the agents' random number generator with current seed
                 Agent.Reseed(seed);
 
-                // Create new game on standard 7 x 6 board
-                GameEngine game = new GameEngine(player1, player2, 7, 6);
+                // Create and start new game on standard 7 x 6 board
+                GameEngine game = new GameEngine(agent1, agent2, 7, 6, verbose);
 
                 // Play until we get a winner
-                Move winner = game.Start(verbose);
+                Move winner = game.Start();
                 ShowResult(winner);
 
-                // Prompt for next game options (new game, replay, or quit)
-                char keypress = PromptChar(END, new char[] { 'r', 'n', 'q' });
+                // Prompt for next game options (relay, new game, or quit)
+                char keypress = PromptChar(END_GAME_MESSAGE, new char[] { 'r', 'n', 'a', 'q' });
                 Console.WriteLine();
 
-                // Process 
+                // Process user input at the end of each game
                 switch (keypress)
                 {
+                    case 'r': break;
                     case 'n': seed = randomSeed.Next(); break;
+                    case 'a':
+                        agent1 = SelectAgent("Red", Color.Red);
+                        agent2 = SelectAgent("Yellow", Color.Yel);
+                        seed = randomSeed.Next();
+                        break;
                     case 'q': return;
                 }
 
@@ -108,28 +128,52 @@ namespace ConnectFour
         }
 
 
+        // Prompts user to select agent, then creates and returns new agent
+        private static Agent SelectAgent(string player, Color token)
+        {
+            // Display initial message to select agent for given player
+            Console.WriteLine($"Enter Player {player} paramaters:");
+            foreach (string line in SELECT_AGENT_MESSAGE)
+            {
+                Console.WriteLine(line);
+            }
+            Console.WriteLine();
+
+            // Display a cursor and wait for user input within range [1-4]
+            int input;
+            do
+            {
+                input = PromptInt("    ");
+            } while (input < 1 || input > 4);
+            Console.WriteLine();
+
+            // Create and return a new agent using the AgentFactory method
+            Agent agent = AgentFactory(input, token);
+            return agent;
+        }
+
+
         // Factory method to return 5agent from command-line parameter
-        private static Agent AgentFactory(string type, Color token)
+        private static Agent AgentFactory(int number, Color token)
         {
             int plies = 0;
-            switch (type)
+            switch (number)
             {
-                case "Human":
-                    return new HumanAgent(token);
-
-                case "Random":
+                case 1:
                     return new RandomAgent(token);
 
-                case "Minimax":
+                case 2:
                     plies = PromptInt("   Ply depth for MiniMax:");
                     return new MinimaxAgent(token, plies, 0.99);
 
-                case "MinimaxRandom":
+                case 3:
                     plies = PromptInt("   Ply depth for MiniMax:");
                     return new MinimaxRandomAgent(token, plies, 0.99);
 
+                case 4:
+                    return new HumanAgent(token);
             }
-            throw new ArgumentException($"Invalid agent name: { type }");
+            throw new ArgumentException($"Invalid agent number");
         }
 
     }

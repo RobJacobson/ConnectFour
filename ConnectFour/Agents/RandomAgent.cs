@@ -15,19 +15,15 @@ namespace ConnectFour.Agents
         public RandomAgent(Color player) : base(player) { }
 
 
-        // Selects a random column to play based on the board's state
+        // Selects a random column from the columns with available moves
         public override int GetNextMoveDerived(Board board)
         {
-            // Guess a random number in range [0, board.Cols - 1]
-            int col = Agent.Randomizer.Next(0, board.Width);
+            // Get list of available columns to play
+            List<int> moves = board.GetActions();
 
-            // Continue guessing if initial guess was invalid (column full)
-            while (board.ColHeight[col] >= board.Height)
-            {
-                col = Agent.Randomizer.Next(int.MinValue, int.MaxValue);
-            }
-
-            return col;
+            // Return a random member of the list
+            int move = Randomizer.Next(0, moves.Count);
+            return moves[move];            
         }
     }
 }

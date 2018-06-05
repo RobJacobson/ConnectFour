@@ -14,16 +14,18 @@ namespace ConnectFour
         private readonly Stack<Move> moves;
         private readonly Agent player1;
         private readonly Agent player2;
+        private readonly bool verbose;
 
 
         // Initialize game with specified agents and board dimensions
-        public GameEngine(Agent player1, Agent player2, int cols, int rows)
+        public GameEngine(Agent player1, Agent player2, int cols, int rows, bool verbose)
         {
             // Initialize parameters
             this.player1 = player1;
             this.player2 = player2;
             this.moves   = new Stack<Move>();
             this.board   = new Board(cols, rows);
+            this.verbose = verbose;
 
             // Identify the players
             Console.WriteLine($"New game: { player1 } vs { player2 }");
@@ -31,7 +33,7 @@ namespace ConnectFour
 
 
         // Initiates a game and continues until one player wins or board full
-        public Move Start(bool verbose)
+        public Move Start()
         {
             // Iterate through the maximum number of moves
             int maxTurns = board.Width * board.Height;
