@@ -9,6 +9,7 @@ namespace ConnectFour.Agents
 {
     class MinimaxAgent : Agent
     {
+        private const double DECAY_RATE = 1.0;
 
         // Define an inner class to store each action
         public class Action
@@ -36,15 +37,14 @@ namespace ConnectFour.Agents
         // Total count of iterations of MinVal or MaxVal
         public int MinimaxCount { get; private set; }
         public int PlyDepth { get; }
-        public double Decay { get; }
+
 
 
         // Overrides the base constructor
-        public MinimaxAgent(Color player, int plyDepth, double decay)
+        public MinimaxAgent(Color player, int plyDepth)
             : base(player)
         {
             PlyDepth = plyDepth;
-            Decay = decay;
         }
 
 
@@ -166,11 +166,10 @@ namespace ConnectFour.Agents
                 {
                     // Get Red's expected next move if Yellow plays here
                     Action worst = Max(board, depth - 1);
-                    score = worst.Score;
-                }
 
-                // Apply a decay rate to scores to give higher priority to quick moves
-                score = (int)(score * Decay);
+                    // Apply a decay to future moves (prioritizes quick moves)
+                    score = (int)(worst.Score * DECAY_RATE);
+                }
 
                 // Determine whether this move is better than best move so far
                 if (best.Score > score)

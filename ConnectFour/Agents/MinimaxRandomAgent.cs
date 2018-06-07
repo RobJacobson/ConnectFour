@@ -10,8 +10,8 @@ namespace ConnectFour.Agents
     // Class to model a Minimax heuristic  that just picks a random value
     class MinimaxRandomAgent : MinimaxAgent
     {
-        public MinimaxRandomAgent(Color player, int plyDepth, double decay) 
-            : base(player, plyDepth, decay)
+        public MinimaxRandomAgent(Color player, int plyDepth) 
+            : base(player, plyDepth)
         {
         }
 
