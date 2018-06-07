@@ -11,7 +11,7 @@ namespace ConnectFour
     class GameEngine
     {
         private readonly Board board;
-        private readonly Stack<Move> moves;
+        private readonly List<Move> moves;
         private readonly Agent player1;
         private readonly Agent player2;
         private readonly bool verbose;
@@ -20,22 +20,20 @@ namespace ConnectFour
         // Initialize game with specified agents and board dimensions
         public GameEngine(Agent player1, Agent player2, int cols, int rows, bool verbose)
         {
-            // Initialize parameters
             this.player1 = player1;
             this.player2 = player2;
-            this.moves   = new Stack<Move>();
+            this.moves   = new List<Move>();
             this.board   = new Board(cols, rows);
             this.verbose = verbose;
-
-            // Identify the players
-            Console.WriteLine($"New game: { player1 } vs { player2 }");
         }
 
 
         // Initiates a game and continues until one player wins or board full
         public Move Start()
         {
-            // Iterate through the maximum number of moves
+            Move move = null;
+
+            // Iterate through the maximum number of moves on board
             int maxTurns = board.Width * board.Height;
             for (int turn = 0; turn < maxTurns; turn++)
             {
@@ -47,26 +45,27 @@ namespace ConnectFour
                 int row = board.ColHeight[col];
 
                 // Record this move
-                Move move = new Move(player.Token, col, row, turn);
-                moves.Push(move);
+                move = new Move(player.Token, col, row, turn);
+                moves.Add(move);
 
                 // Drop token into selected column and test for goal
                 bool winner = board.Insert(player.Token, col);
 
-                // Draw updated board if in 'verbose mode' or game over
-                if (verbose || winner || turn == maxTurns - 1)
+                // Draw updated board if in 'verbose mode'
+                if (verbose)
                 {
                     DisplayMove(move);
                 }
 
-                // Return if we have a winner
+                // Return if this player has won
                 if (winner)
                 {
                     return move;
                 }
+
             }
 
-            // Board full; no winner
+            // End of game without a winner (tie game)
             return null;
         }
 

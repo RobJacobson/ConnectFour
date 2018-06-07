@@ -61,17 +61,17 @@ namespace ConnectFour.Gameplay
 
 
         // Returns a list of the indexes for each playable (non-full) column
-        public List<int> GetActions()
+        public List<int> GetAvailableMoves()
         {
-            var result = new List<int>(Width);
+            var results = new List<int>();
             for (int col = 0; col < Width; col++)
             {
                 if (ColHeight[col] < Height)
                 {
-                    result.Add(col);
+                    results.Add(col);
                 }
             }
-            return result;
+            return results;
         }
 
 
@@ -83,8 +83,8 @@ namespace ConnectFour.Gameplay
             Grid[col, row] = token;
             NumTokens++;
 
-            // Return true if we have a winning position
-            return Success(token, col);
+            // Return true if we found a winning position
+            return Success(token, col, row);
         }
 
 
@@ -99,11 +99,8 @@ namespace ConnectFour.Gameplay
 
         // Returns true if board has four repeated tokens in col, row, or diag
         // (Only tests rows, cols and diags that intersect with new token)
-        public bool Success(Color token, int col)
+        public bool Success(Color token, int col, int row)
         {
-            // Get row of last token in column
-            int row = ColHeight[col] - 1;
-
             // Test array slice of current row
             bool winRow = FourInRow(token, this.Row(row));
 
@@ -257,9 +254,9 @@ namespace ConnectFour.Gameplay
             {
                 switch (Grid[col, row])
                 {
-                    case Color.Red:  sb.Append(" O "); break;
-                    case Color.Yel:  sb.Append(" X "); break;
-                    case Color.None: sb.Append(" ■ "); break;
+                    case Color.Red:  sb.Append("O\t"); break;
+                    case Color.Yel:  sb.Append("X\t"); break;
+                    case Color.None: sb.Append("■\t"); break;
                 }
             }
             return sb.ToString();
@@ -277,10 +274,10 @@ namespace ConnectFour.Gameplay
             // Append each row (last row first)
             for (int row = Height - 1; row >= 0; row--)
             {
-                sb.Append($"  { row }: ");
-                sb.Append(" ║ ");
+                sb.Append($"  { row }:\t");
+                sb.Append("║\t");
                 sb.Append(GetRowText(row));
-                sb.Append(" ║ ");
+                sb.Append("║\t");
                 sb.AppendLine();
             }
 
@@ -299,7 +296,7 @@ namespace ConnectFour.Gameplay
         public void ShowBoard()
         {
             // Get ASCII art representation and iterate through each character
-            foreach (char c in this.ToStringASCII())
+            foreach (char c in this.ToStringASCII().Replace("\t", "  ").ToArray())
             {
                 // Select appropriate color for character and print to console
                 ConsoleColor foreground;

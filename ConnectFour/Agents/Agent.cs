@@ -14,11 +14,8 @@ namespace ConnectFour.Agents
         // The token color for this agent
         public Color Token { get; }
 
-        // A list of every move from this agent (by column number)
-        public List<int> Moves { get; }
-
         // A shared random-number generator for all agents
-        protected static Random Randomizer { get; private set; }
+        protected static Random Randomizer { get; private set; } = new Random();
 
         // Stopwatch for timing each agent's moves
         public Stopwatch Clock { get; }
@@ -27,7 +24,6 @@ namespace ConnectFour.Agents
         public Agent(Color token)
         {
             Token = token;
-            Moves = new List<int>();
             Clock = new Stopwatch();
         }
 
@@ -38,7 +34,6 @@ namespace ConnectFour.Agents
             Clock.Start();
             int column = GetNextMoveDerived(board);
             Clock.Stop();
-            Moves.Add(column);
             return column;
         }
 

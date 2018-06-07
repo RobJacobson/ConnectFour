@@ -9,20 +9,24 @@ namespace ConnectFour.Agents
 {
     class MinimaxAgent : Agent
     {
-        private const double DECAY_RATE = 1.0;
+        private const double DECAY_RATE = 0.5;
 
         // Define an inner class to store each action
-        public class Action
+        public class Move
         {
-            // Define read-only constructors for the column move and score
-            public int   Move  { get; set; }
-            public int   Score { get; set; }
+            // Column number of this move
+            public int Col  { get; }
+
+            // Expected score for this move
+            public int Score { get; }
+
+            // Color of token
             public Color Token { get; }
 
             // Define constructor
-            public Action(int move, int score, Color token)
+            public Move(int col, int score, Color token)
             {
-                Move = move;
+                Col = col;
                 Score = score;
                 Token = token;
             }
@@ -30,7 +34,7 @@ namespace ConnectFour.Agents
             // Override textual display of action
             public override string ToString()
             {
-                return $"{Token} -> {Move} ({Score})";
+                return $"{Token} -> {Col} ({Score})";
             }
         }
 
@@ -59,28 +63,26 @@ namespace ConnectFour.Agents
             }
             else
             {
-                // No; call max on even moves, min on odd
-                Action action;
+                // No; call Max on even moves, Min on odd
                 if (board.NumTokens % 2 == 0)
                 {
-                    action = Max(board, PlyDepth);
+                    // Run Max algorithm
+                    Move move = Max(board, PlyDepth);
+                    Console.WriteLine(move);
+                    // Return the column number with the best score
+
+                    return move.Col;
                 }
                 else
                 {
-                    action = Min(board, PlyDepth);
+                    // Run Min algorithm
+                    Move move = Min(board, PlyDepth);
+                    Console.WriteLine(move);
+
+                    // Return the column number with the best score
+                    return move.Col;
                 }
 
-                // Did we find a valid move?
-                if (action.Move >= 0)
-                {
-                    // Yes; select this move
-                    return action.Move;
-                }
-                else
-                {
-                    // No; return the first available move
-                    return board.GetActions()[0];
-                }
             }
         }
 
@@ -92,98 +94,196 @@ namespace ConnectFour.Agents
         }
 
 
-        // Returns the best next move for Red using Minimax algorithm
-        public Action Max(Board board, int depth)
+        // Uses Minimax with heuristic to return best action for Red
+        public Move Max(Board board, int depth)
         {
             // Count each iteration of Minimax for diagnostics
             MinimaxCount++;
 
-            // Start by assuming a worst-case result
-            Action best = new Action(-1, int.MinValue, Color.Red);
+            // Create a worst-case action with a score of "negative infinity"
+            Move best = new Move(-1, int.MinValue, Color.Red);
 
-            // Recurse downward to find our best column move
-            foreach (int move in board.GetActions())
+            // Iterate through each column that isn't already full
+            var moves = board.GetAvailableMoves();
+            foreach (int col in moves)
             {
-                // Track the best score for this move
-                int score;
+                // Insert Red's token in column and check for victory
+                bool success = board.Insert(Color.Red, col);
 
-                // Insert token in this column and check for winning conditions
-                bool success = board.Insert(Color.Red, move);
-
-                // Have we reached a leaf state (either a win or end-of-search)?
-                if (success || depth == 0)
+                // Are we in a leaf-node state (success or end of search)?
+                if (success)
                 {
-                    // Get best value if we found winning state, else use heuristic
-                    score = (success) ? int.MaxValue : Heuristic(board, move);
+                    best = new Move(col, int.MaxValue, Color.Red);
+                }
+                else if (depth == 0)
+                {
+                    best = new Move(col, Heuristic(board, col), Color.Red);
                 }
                 else
                 {
-                    // Get yellow's expected next move if red plays here
-                    Action worst = Min(board, depth - 1);
-                    score = worst.Score;
+                    // Get Yellow's expected next move if Red plays here
+                    Move worst = Min(board, depth - 1);
+                    if (worst.Score * DECAY_RATE > best.Score || best.Col == -1)
+                    {
+                        best = new Move(col, (int)(worst.Score * DECAY_RATE), Color.Red);
+                    }
                 }
 
-                // Determine whether this move is better than best move so far
-                if (best.Score < score)
+                // Remove the token placed above
+                board.Remove(col);
+
+                // If we found perfect move, return it (no need to search more)
+                if (best.Score == int.MaxValue)
                 {
-                    best.Score = score;
-                    best.Move = move;
+                    return best;
                 }
-
-                // Clean up by removing earlier token
-                board.Remove(move);
 
             }
+
             return best;
         }
 
-
-        // Returns the best next move for Yellow using Minimax algorithm
-        public Action Min(Board board, int depth)
+        // Uses Minimax with heuristic to return best action for Yellow
+        public Move Min(Board board, int depth)
         {
             // Count each iteration of Minimax for diagnostics
             MinimaxCount++;
 
-            // Start by assuming a worst-case result
-            Action best = new Action(-1, int.MaxValue, Color.Yel);
+            // Create a worst-case action with a score of "positive infinity"
+            Move best = new Move(-1, int.MaxValue, Color.Yel);
 
-            // Recurse downward to find our best column move
-            foreach (int move in board.GetActions())
+            // Iterate through each column that isn't already full
+            var moves = board.GetAvailableMoves();
+            foreach (int col in moves)
             {
-                // Track the best score for this move
-                int score;
+                // Insert Yellow's token in column and check for victory
+                bool success = board.Insert(Color.Yel, col);
 
-                // Insert token in this column and check for winning conditions
-                bool success = board.Insert(Color.Yel, move);
-
-                // Have we reached a leaf state (either a win or end-of-search)?
-                if (success || depth == 0)
+                // Are we in a leaf-node state (success or end of search)?
+                if (success)
                 {
-                    // Get best value if we found winning state, else use heuristic
-                    score = (success) ? int.MinValue : Heuristic(board, move);
+                    best = new Move(col, int.MinValue, Color.Yel);
+                }
+                else if (depth == 0)
+                {
+                    best = new Move(col, Heuristic(board, col), Color.Yel);
                 }
                 else
                 {
-                    // Get Red's expected next move if Yellow plays here
-                    Action worst = Max(board, depth - 1);
-
-                    // Apply a decay to future moves (prioritizes quick moves)
-                    score = (int)(worst.Score * DECAY_RATE);
+                    // Get Yellow's expected next move if Red plays here
+                    Move worst = Max(board, depth - 1);
+                    if (worst.Score < best.Score || best.Col == -1)
+                    {
+                        best = new Move(col, worst.Score, Color.Yel);
+                    }
                 }
 
-                // Determine whether this move is better than best move so far
-                if (best.Score > score)
+                // Remove the token placed above
+                board.Remove(col);
+
+                // If we found perfect move, return it (no need to search more)
+                if (best.Score == int.MinValue)
                 {
-                    best.Score = score;
-                    best.Move = move;
+                    return best;
                 }
-
-                // Clean up by removing earlier token
-                board.Remove(move);
 
             }
+
             return best;
         }
+
+        //// Returns the best next move for Red using Minimax algorithm
+        //public Action Max(Board board, int depth)
+        //{
+        //    // Count each iteration of Minimax for diagnostics
+        //    MinimaxCount++;
+
+        //    // Start by assuming a worst-case result
+        //    Action best = new Action(-1, int.MinValue, Color.Red);
+
+        //    // Recurse downward to find our best column move
+        //    foreach (int move in board.GetActions())
+        //    {
+        //        // Track the best score for this move
+        //        int score;
+
+        //        // Insert token in this column and check for winning conditions
+        //        bool success = board.Insert(Color.Red, move);
+
+        //        // Have we reached a leaf state (either a win or end-of-search)?
+        //        if (success || depth == 0)
+        //        {
+        //            // Get best value if we found winning state, else use heuristic
+        //            score = (success) ? int.MaxValue : Heuristic(board, move);
+        //        }
+        //        else
+        //        {
+        //            // Get yellow's expected next move if red plays here
+        //            Action worst = Min(board, depth - 1);
+        //            score = worst.Score;
+        //        }
+
+        //        // Determine whether this move is better than best move so far
+        //        if (best.Score < score)
+        //        {
+        //            best.Score = score;
+        //            best.Move = move;
+        //        }
+
+        //        // Clean up by removing earlier token
+        //        board.Remove(move);
+
+        //    }
+        //    return best;
+        //}
+
+
+        //// Returns the best next move for Yellow using Minimax algorithm
+        //public Action Min(Board board, int depth)
+        //{
+        //    // Count each iteration of Minimax for diagnostics
+        //    MinimaxCount++;
+
+        //    // Start by assuming a worst-case result
+        //    Action best = new Action(-1, int.MaxValue, Color.Yel);
+
+        //    // Recurse downward to find our best column move
+        //    foreach (int move in board.GetActions())
+        //    {
+        //        // Track the best score for this move
+        //        int score;
+
+        //        // Insert token in this column and check for winning conditions
+        //        bool success = board.Insert(Color.Yel, move);
+
+        //        // Have we reached a leaf state (either a win or end-of-search)?
+        //        if (success || depth == 0)
+        //        {
+        //            // Get best value if we found winning state, else use heuristic
+        //            score = (success) ? int.MinValue : Heuristic(board, move);
+        //        }
+        //        else
+        //        {
+        //            // Get Red's expected next move if Yellow plays here
+        //            Action worst = Max(board, depth - 1);
+
+        //            // Apply a decay to future moves (prioritizes quick moves)
+        //            score = (int)(worst.Score * DECAY_RATE);
+        //        }
+
+        //        // Determine whether this move is better than best move so far
+        //        if (best.Score > score)
+        //        {
+        //            best.Score = score;
+        //            best.Move = move;
+        //        }
+
+        //        // Clean up by removing earlier token
+        //        board.Remove(move);
+
+        //    }
+        //    return best;
+        //}
 
     }
 }

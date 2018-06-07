@@ -19,7 +19,7 @@ namespace ConnectFour.Agents
         public override int GetNextMoveDerived(Board board)
         {
             // Get list of available columns to play
-            List<int> moves = board.GetActions();
+            List<int> moves = board.GetAvailableMoves();
 
             // Return a random member of the list
             int move = Randomizer.Next(0, moves.Count);

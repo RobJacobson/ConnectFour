@@ -15,9 +15,10 @@ namespace ConnectFour
         const string MODE = "Select game mode (b for batch mode, s for single game)";
         const string NUMBER = "Select number of iterations:";
         const string VERBOSE = "Display each move? (y or n)";
-        const string END_GAME = "New game? (r to replay, n for new game, a to repick agent, q to quit)";
+        const string END_GAME = "New game? (r to replay, n for new game, m for main menu, q to quit)";
+        const string END_TEST = "Run test again? (r to run test, m for main menu, q to quit)";
 
-        const double MINIMAX_DECAY = 0.9;
+        const double MINIMAX_DECAY = 1;
 
         static string[] SELECT_AGENT_MESSAGE =
         {
@@ -32,15 +33,24 @@ namespace ConnectFour
 
         static void Main(string[] args)
         {
+            MainMenu();
+
+            // Pause before exiting
+            Console.Write("Press enter to continue");
+            Console.ReadLine();
+        }
+
+        private static void MainMenu()
+        {
             // Prompt for game mode (batch or single-game)
             char key = PromptChar(MODE, new char[] { 'b', 's' });
             Console.WriteLine();
-            
+
             // Prompt for type of each agent and create agents
             Agent agent1 = SelectAgent("Red", Color.Red);
             Agent agent2 = SelectAgent("Yellow", Color.Yel);
 
-            // Call the appropriate game mode
+            // Start the appropriate game mode
             if (key == 'b')
             {
                 PlayBatch(agent1, agent2);
@@ -49,12 +59,7 @@ namespace ConnectFour
             {
                 PlaySingle(agent1, agent2);
             }
-
-            // Pause before exiting
-            Console.Write("Press enter to continue");
-            Console.ReadLine();
         }
-
 
         private static void PlayBatch(Agent agent1, Agent agent2)
         {
@@ -71,30 +76,30 @@ namespace ConnectFour
             {
                 // Create and start new game on standard 7 x 6 board
                 var game = new GameEngine(agent1, agent2, 7, 6, false);
+                Console.Write("Game {rep}: ");
 
                 // Start one game and play until it ends
                 Move winner = game.Start();
                 ShowResult(winner);
 
                 // Count the number of victories per side
-                if (winner.Token == Color.Red)
-                {
-                    redWins++;
-                }
-                else if (winner.Token == Color.Yel)
-                {
-                    yelWins++;
-                }
-                else
+                if (winner == null)
                 {
                     draw++;
                 }
+                else if (winner.Token == Color.Red)
+                {
+                    redWins++;
+                }
+                else
+                {
+                    yelWins++;
+                }
 
-                // Print the results for this game
-                Console.WriteLine($"{rep}:  Winner: {winner.Token}, Red wins: {redWins}, Yellow wins: {yelWins}");
             }
 
             // Print the summary results
+            Console.WriteLine($"Red wins: {redWins}, Yellow wins: {yelWins}, draws: {draw}");
             Console.WriteLine();
         }
 
@@ -104,22 +109,21 @@ namespace ConnectFour
             var randomSeedGenerator = new Random();
             int seed = randomSeedGenerator.Next();
 
-            // Determine whether to use verbose mode (i.e., print each move)
-            bool verbose = (PromptChar(VERBOSE, new char[] { 'y', 'n' }) == 'y');
-            Console.WriteLine();
-
             // Loop until user selects "quit"
             while (true)
             {
+                // Seed the agent's RNG with the current seed
+                Agent.Reseed(seed);
+
                 // Create and start new game on standard 7 x 6 board
-                GameEngine game = new GameEngine(agent1, agent2, 7, 6, verbose);
+                GameEngine game = new GameEngine(agent1, agent2, 7, 6, true);
 
                 // Start one game and play until it ends
                 Move winner = game.Start();
                 ShowResult(winner);
 
                 // Play another game?
-                char key = PromptChar(END_GAME, new char[] { 'r', 'n', 'a', 'q' });
+                char key = PromptChar(END_GAME, new char[] { 'r', 'n', 'm', 'q' });
                 switch (key)
                 {
                     case 'r':
@@ -129,10 +133,8 @@ namespace ConnectFour
                         seed = randomSeedGenerator.Next();
                         break;
 
-                    case 'a':
-                        agent1 = SelectAgent("Red", Color.Red);
-                        agent2 = SelectAgent("Yellow", Color.Yel);
-                        seed = randomSeedGenerator.Next();
+                    case 'm':
+                        MainMenu();
                         break;
 
                     case 'q':
@@ -166,8 +168,8 @@ namespace ConnectFour
             {
                 Console.Write(prompt + "  > ");
                 response = Char.ToLower(Console.ReadKey().KeyChar);
-                Console.WriteLine();
             } while (!validChars.Any(c => c == response));
+            Console.WriteLine();
             return response;
         }
 
@@ -182,6 +184,7 @@ namespace ConnectFour
                 Console.Write(prompt + "  > ");
                 response = Console.ReadLine();
             } while (!Int32.TryParse(response, out result));
+            Console.WriteLine();
             return result;
         }
 
@@ -203,7 +206,6 @@ namespace ConnectFour
             {
                 input = PromptInt("    ");
             } while (input < 1 || input > 4);
-            Console.WriteLine();
 
             // Create and return a new agent using the AgentFactory method
             Agent agent = AgentFactory(input, token);
@@ -221,11 +223,11 @@ namespace ConnectFour
                     return new RandomAgent(token);
 
                 case 2:
-                    plies = PromptInt("   Ply depth for MiniMax:");
+                    plies = PromptInt("     Ply depth for MiniMax:");
                     return new MinimaxAgent(token, plies);
 
                 case 3:
-                    plies = PromptInt("   Ply depth for MiniMax:");
+                    plies = PromptInt("     Ply depth for MiniMax:");
                     return new MinimaxRandomAgent(token, plies);
 
                 case 4:
