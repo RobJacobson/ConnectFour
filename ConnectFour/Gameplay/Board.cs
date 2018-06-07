@@ -32,12 +32,12 @@ namespace ConnectFour.Gameplay
         // Constructs an empty Connect-Four board with the given dimensions
         public Board(int width, int height)
         {
-            Width     = width;
-            Height    = height;
+            Width = width;
+            Height = height;
             ColHeight = new int[width];
-            Grid      = new Color[width, height];
+            Grid = new Color[width, height];
             NumTokens = 0;
-            Capacity  = width * height;
+            Capacity = width * height;
         }
 
 
@@ -97,24 +97,105 @@ namespace ConnectFour.Gameplay
             NumTokens--;
         }
 
-        // Returns true if board has four repeated tokens in col, row, or diag
-        // (Only tests rows, cols and diags that intersect with new token)
+        // Returns true if there's four-in-a-row in any direction at [col, row]
+        //
+        // NB: This goal-test function is at the center of the inner loops. 
+        //     This code below is optimized for performance.
         public bool Success(Color token, int col, int row)
         {
-            // Test array slice of current row
-            bool winRow = FourInRow(token, this.Row(row));
+            // Check row (four possible combinations of matches
+            if (CheckRow(token, col - 3, row)
+                || CheckRow(token, col - 2, row)
+                || CheckRow(token, col - 1, row)
+                || CheckRow(token, col, row))
+            {
+                return true;
+            }
 
-            // Test array slice of current column
-            bool winCol = FourInRow(token, this.Column(col));
+            if (CheckColumn(token, col, row))
+            {
+                return true;
+            }
 
-            // Test array slices of current diagonals (up-right and up-left)
-            bool winURD = FourInRow(token, this.DiagonalUR(col, row));
-            bool winULD = FourInRow(token, this.DiagonalUL(col, row));
+            // Only check diagonals if at least one column has four tokens
+            if (ColHeight.Max() > 3)
+            {
+                if (CheckDiagUR(token, col - 3, row - 3)
+                    || CheckDiagUR(token, col - 2, row - 2)
+                    || CheckDiagUR(token, col - 1, row - 1)
+                    || CheckDiagUR(token, col, row))
+                {
+                    return true;
+                }
 
-            // Return true if we have four-in-a-row in any direction
-            return (winRow || winCol || winURD || winULD);
+                if (CheckDiagUL(token, col + 3, row - 3)
+                    || CheckDiagUL(token, col + 2, row - 2)
+                    || CheckDiagUL(token, col + 1, row - 1)
+                    || CheckDiagUL(token, col, row))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
+        // Returns true if the given vertical tokens all match player
+        bool CheckColumn(Color token, int col, int row)
+        {
+            if (row < 3)
+            {
+                return false;
+            }
+
+            return Grid[col, row - 1] == token 
+                && Grid[col, row - 2] == token 
+                && Grid[col, row - 3] == token;
+        }
+
+        // Returns true if the given horizontal tokens all match player
+        bool CheckRow(Color token, int col, int row)
+        {
+            if (col < 0 || col > Width - 4)
+            {
+                return false;
+            }
+            return Grid[col, row] == token
+                && Grid[col + 1, row] == token
+                && Grid[col + 2, row] == token
+                && Grid[col + 3, row] == token;
+        }
+
+        // Returns true if the given upper-right diag has four-in-row
+        bool CheckDiagUR(Color token, int col, int row)
+        {
+            if (col < 0 || col > Width - 4 || row < 0 || row > Height - 4)
+            {
+                return false;
+            }
+            return Grid[col, row] == token
+                && Grid[col + 1, row + 1] == token
+                && Grid[col + 2, row + 2] == token
+                && Grid[col + 3, row + 3] == token;
+        }
+
+        // Returns true if the given upper-left diag has four-in-row
+        bool CheckDiagUL(Color token, int col, int row)
+        {
+            if (col < 4 || col >= Width || row < 0 || row > Height - 4)
+            {
+                return false;
+            }
+            return Grid[col, row] == token
+                && Grid[col - 1, row + 1] == token
+                && Grid[col - 2, row + 2] == token
+                && Grid[col - 3, row + 3] == token;
+        }
+
+        public bool FourInRow(Color token, Color t1, Color t2, Color t3)
+        {
+            return (token == t1 && token == t2 && token == t3);
+        }
 
         // Iterates through array slice and tests for four repeat matches
         public bool FourInRow(Color player, IEnumerable<Color> slice)
