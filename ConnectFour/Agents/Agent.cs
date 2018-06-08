@@ -29,17 +29,17 @@ namespace ConnectFour.Agents
 
 
         // Requests and returns next column number to play from derived agent
-        public int GetNextMove(Board board)
+        public Move GetNextMove(Board board)
         {
             Clock.Start();
-            int column = GetNextMoveDerived(board);
+            Move move = GetNextMoveDerived(board);
             Clock.Stop();
-            return column;
+            return move;
         }
 
 
         // Abstract method for derived agent to return column of next move
-        public abstract int GetNextMoveDerived(Board board);
+        public abstract Move GetNextMoveDerived(Board board);
 
 
         // Return string for pretty-print output using derived class's name

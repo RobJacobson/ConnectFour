@@ -16,14 +16,14 @@ namespace ConnectFour.Agents
 
 
         // Selects a random column from the columns with available moves
-        public override int GetNextMoveDerived(Board board)
+        public override Move GetNextMoveDerived(Board board)
         {
-            // Get list of available columns to play
+            // Get list of all available columns to play
             List<int> moves = board.GetAvailableMoves();
 
             // Return a random member of the list
-            int move = Randomizer.Next(0, moves.Count);
-            return moves[move];            
+            int r = Randomizer.Next(0, moves.Count);
+            return new Move(Token, r, 0);            
         }
     }
 }

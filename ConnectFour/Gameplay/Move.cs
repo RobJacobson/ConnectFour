@@ -12,22 +12,20 @@ namespace ConnectFour.Gameplay
         // Move's token color, column number, row number and turn number
         public Color Token { get; }
         public int   Col   { get; }
-        public int   Row   { get; }
-        public int   Turn  { get; }
+        public int   Score { get; }
 
         // Constructs a new Move object
-        public Move(Color token, int col, int row, int turn)
+        public Move(Color token, int col, int score)
         {
             Token = token;
             Col   = col;
-            Row   = row;
-            Turn  = turn;
+            Score = score;
         }
 
         // Returns pretty-print text to represent move
         public override string ToString()
         {
-            return $"{ Turn }: { Token } => ({ Col }, { Row })";
+            return $"{ Token } => Col {Col} ({Score})";
         }
 
         // Returns the console color that matches this token
@@ -35,5 +33,6 @@ namespace ConnectFour.Gameplay
         {
             return (Token == Color.Red) ? ConsoleColor.Red : ConsoleColor.Yellow;
         }
+
     }
 }

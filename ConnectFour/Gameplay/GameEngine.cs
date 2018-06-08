@@ -41,15 +41,11 @@ namespace ConnectFour
                 Agent player = (turn % 2 == 0) ? player1 : player2;
 
                 // Get next play from agent
-                int col = player.GetNextMove(board);
-                int row = board.ColHeight[col];
-
-                // Record this move
-                move = new Move(player.Token, col, row, turn);
+                move = player.GetNextMove(board);
                 moves.Add(move);
 
                 // Drop token into selected column and test for goal
-                bool winner = board.Insert(player.Token, col);
+                bool winner = board.Insert(player.Token, move.Col);
 
                 // Draw updated board if in 'verbose mode'
                 if (verbose)

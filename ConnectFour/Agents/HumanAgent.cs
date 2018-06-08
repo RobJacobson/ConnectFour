@@ -14,7 +14,7 @@ namespace ConnectFour.Agents
         public HumanAgent(Color player) : base(player) { }
 
         // Override GetNextMove with custom logic
-        public override int GetNextMoveDerived(Board board)
+        public override Move GetNextMoveDerived(Board board)
         {
             // Prompt for input
             Console.Write($"{base.Token,-8}> ");
@@ -26,7 +26,7 @@ namespace ConnectFour.Agents
                 Console.Write($"{base.Token,-8}> ");
             }
 
-            return col;
+            return new Move(Token, col, 0);
         }
 
     }
