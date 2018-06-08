@@ -147,7 +147,6 @@ namespace ConnectFour.Gameplay
             {
                 return false;
             }
-
             return Grid[col, row - 1] == token 
                 && Grid[col, row - 2] == token 
                 && Grid[col, row - 3] == token;

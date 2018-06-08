@@ -69,8 +69,8 @@ namespace ConnectFour.Agents
                     // Run Max algorithm
                     Move move = Max(board, PlyDepth);
                     Console.WriteLine(move);
-                    // Return the column number with the best score
 
+                    // Return the column number with the best score
                     return move.Col;
                 }
                 else
