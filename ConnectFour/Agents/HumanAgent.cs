@@ -11,7 +11,7 @@ namespace ConnectFour.Agents
     public class HumanAgent : Agent
     {
         // Call base constructor
-        public HumanAgent(Color player) : base(player) { }
+        public HumanAgent(Token player) : base(player) { }
 
         // Override GetNextMove with custom logic
         public override Move GetNextMoveDerived(Board board)

@@ -10,6 +10,9 @@ namespace ConnectFour.Agents
 
     class MinimaxKnnAgent : MinimaxAgent
     {
+        private int k;
+
+
         // A list of offsets for the relevant ordinal directions
         // (North is not included because this token must be at top of stack)
         readonly List<Point> directions = new List<Point>
@@ -23,9 +26,10 @@ namespace ConnectFour.Agents
             new Point(-1,  1)        // Northwest
         };
 
-        public MinimaxKnnAgent(Color player, int plyDepth)
+        public MinimaxKnnAgent(Token player, int plyDepth)
             : base(player, plyDepth)
         {
+            this.k = 1;
         }
 
         public override int Heuristic(Board board, int col)
@@ -36,24 +40,39 @@ namespace ConnectFour.Agents
             // Get scores from every direction except North
             foreach (var direction in directions)
             {
-                // Get the coordinates for the neighbor
-                int c = col + direction.Col;
-                int r = row + direction.Row;
+                // Copy current coordinates for the neighbor
+                int ncol = col;
+                int nrow = row;
 
-                // Are we within bounds of the board?
-                if (c >= 0 && r >= 0 && c < board.Width && r < board.Height)
+                for (int i = 0; i < k; i++)
                 {
-                    // Yes; add score of one for empty square, two for match
-                    Color neighbor = board[c, r];
-                    if (neighbor == Color.None)
+                    // Update the row and column of the neighbor
+                    ncol += direction.Col;
+                    nrow += direction.Row;
+
+                    // Are we within bounds of the board?
+                    if (ncol >= 0 && nrow >= 0 && ncol < board.Width && nrow < board.Height)
                     {
-                        score += 1;
-                    }
-                    else if (neighbor == this.Token)
-                    {
-                        score += 2;
+                        // Yes; add score of one for empty square, two for match
+                        Token neighbor = board[ncol, nrow];
+                        if (neighbor == Token.None)
+                        {
+                            // Award one point for an empty neighbor
+                            score += 1;
+                        }
+                        else if (neighbor == this.Token)
+                        {
+                            // Award two points for a matching neighbor
+                            score += 2;
+                        }
+                        else
+                        {
+                            // Exit loop for opponent as neighbor
+                            break;
+                        }
                     }
                 }
+
             }
 
             return score;

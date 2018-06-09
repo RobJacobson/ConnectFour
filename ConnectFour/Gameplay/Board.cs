@@ -21,7 +21,7 @@ namespace ConnectFour.Gameplay
         public int[] ColHeight { get; private set; }
 
         // 2D array of token colors (red, yellow or blank) to represent board
-        public Color[,] Grid { get; }
+        public Token[,] Grid { get; }
 
         // Capacity of board (total number of positions on entire board)
         public int Capacity { get; }
@@ -35,21 +35,21 @@ namespace ConnectFour.Gameplay
             Width = width;
             Height = height;
             ColHeight = new int[width];
-            Grid = new Color[width, height];
+            Grid = new Token[width, height];
             NumTokens = 0;
             Capacity = width * height;
         }
 
 
         // Read-only indexer to get token at specified column and row
-        public Color this[int col, int row]
+        public Token this[int col, int row]
         {
             get
             {
                 if (col < 0 || col >= Width || row < 0 || row >= Height)
                 {
                     // Return nothing if outside bounds of array (don't throw)
-                    return Color.None;
+                    return Token.None;
                 }
                 else
                 {
@@ -76,7 +76,7 @@ namespace ConnectFour.Gameplay
 
 
         // Drops player's token into column; returns record of this move
-        public bool Insert(Color token, int col)
+        public bool Insert(Token token, int col)
         {
             // Insert token at top of column stack
             int row = ColHeight[col]++;
@@ -93,7 +93,7 @@ namespace ConnectFour.Gameplay
         {
             ColHeight[col]--;
             int row = ColHeight[col];
-            Grid[col, row] = Color.None;
+            Grid[col, row] = Token.None;
             NumTokens--;
         }
 
@@ -101,7 +101,7 @@ namespace ConnectFour.Gameplay
         //
         // NB: This goal-test function is at the center of the inner loops. 
         //     This code below is optimized for performance.
-        public bool Success(Color token, int col, int row)
+        public bool Success(Token token, int col, int row)
         {
             // Check row (four possible combinations of matches
             if (CheckRow(token, col - 3, row)
@@ -141,7 +141,7 @@ namespace ConnectFour.Gameplay
         }
 
         // Returns true if the given vertical tokens all match player
-        bool CheckColumn(Color token, int col, int row)
+        bool CheckColumn(Token token, int col, int row)
         {
             if (row < 3)
             {
@@ -153,7 +153,7 @@ namespace ConnectFour.Gameplay
         }
 
         // Returns true if the given horizontal tokens all match player
-        bool CheckRow(Color token, int col, int row)
+        bool CheckRow(Token token, int col, int row)
         {
             if (col < 0 || col > Width - 4)
             {
@@ -166,7 +166,7 @@ namespace ConnectFour.Gameplay
         }
 
         // Returns true if the given upper-right diag has four-in-row
-        bool CheckDiagUR(Color token, int col, int row)
+        bool CheckDiagUR(Token token, int col, int row)
         {
             if (col < 0 || col > Width - 4 || row < 0 || row > Height - 4)
             {
@@ -179,7 +179,7 @@ namespace ConnectFour.Gameplay
         }
 
         // Returns true if the given upper-left diag has four-in-row
-        bool CheckDiagUL(Color token, int col, int row)
+        bool CheckDiagUL(Token token, int col, int row)
         {
             if (col < 4 || col >= Width || row < 0 || row > Height - 4)
             {
@@ -191,17 +191,17 @@ namespace ConnectFour.Gameplay
                 && Grid[col - 3, row + 3] == token;
         }
 
-        public bool FourInRow(Color token, Color t1, Color t2, Color t3)
+        public bool FourInRow(Token token, Token t1, Token t2, Token t3)
         {
             return (token == t1 && token == t2 && token == t3);
         }
 
         // Iterates through array slice and tests for four repeat matches
-        public bool FourInRow(Color player, IEnumerable<Color> slice)
+        public bool FourInRow(Token player, IEnumerable<Token> slice)
         {
             // Compare each token in array slice
             int matches = 0;
-            foreach (Color token in slice)
+            foreach (Token token in slice)
             {
                 // Does token match player's color?
                 if (token == player)
@@ -225,7 +225,7 @@ namespace ConnectFour.Gameplay
 
 
         // Returns iterator for squares in the given column (bottom to top)
-        public IEnumerable<Color> Column(int col)
+        public IEnumerable<Token> Column(int col)
         {
             // Iterate from bottom to top and return each square
             for (int row = 0; row < Height; row++)
@@ -236,7 +236,7 @@ namespace ConnectFour.Gameplay
 
 
         // Returns iterator for squares in the given row (left to right)
-        public IEnumerable<Color> Row(int row)
+        public IEnumerable<Token> Row(int row)
         {
             // Iterate from left to right and return each square
             for (int col = 0; col < Width; col++)
@@ -258,7 +258,7 @@ namespace ConnectFour.Gameplay
         //  0:  5  6  7  8  9 10 11 
         //     ---------------------
         //      0  1  2  3  4  5  6
-        public IEnumerable<Color> DiagonalUR(int index)
+        public IEnumerable<Token> DiagonalUR(int index)
         {
             // Get the starting coordinates (either left or bottom or edge)
             int col = (index < Height) ? 0 : index - Height + 1;
@@ -273,7 +273,7 @@ namespace ConnectFour.Gameplay
 
 
         // Returns iterator for the upper-right diagonal for these coordinates
-        public IEnumerable<Color> DiagonalUR(int col, int row)
+        public IEnumerable<Token> DiagonalUR(int col, int row)
         {
             int index = (Height - 1 - row) + col;
             return DiagonalUR(index);
@@ -292,7 +292,7 @@ namespace ConnectFour.Gameplay
         //  0:  0  1  2  3  4  5  6 
         //     ---------------------
         //      0  1  2  3  4  5  6
-        public IEnumerable<Color> DiagonalUL(int index)
+        public IEnumerable<Token> DiagonalUL(int index)
         {
             // Get the starting coordinates (either bottom or right edge)
             int col = (index < Width) ? index : Width - 1;
@@ -307,7 +307,7 @@ namespace ConnectFour.Gameplay
 
 
         // Returns iterator for the upper-left diagonal for these coordinates
-        public IEnumerable<Color> DiagonalUL(int col, int row)
+        public IEnumerable<Token> DiagonalUL(int col, int row)
         {
             int index = col + row;
             return DiagonalUL(index);
@@ -334,9 +334,9 @@ namespace ConnectFour.Gameplay
             {
                 switch (Grid[col, row])
                 {
-                    case Color.Red:  sb.Append("O\t"); break;
-                    case Color.Yel:  sb.Append("X\t"); break;
-                    case Color.None: sb.Append("■\t"); break;
+                    case Token.Red:  sb.Append("O\t"); break;
+                    case Token.Yel:  sb.Append("X\t"); break;
+                    case Token.None: sb.Append("■\t"); break;
                 }
             }
             return sb.ToString();
@@ -393,10 +393,11 @@ namespace ConnectFour.Gameplay
         }
 
         // Print a caret to show the current column played
-        public void ShowCaret(int col, ConsoleColor color)
+        public void ShowCaret(Move move)
         {
-            Console.ForegroundColor = color;
-            Console.WriteLine(new String(' ', 9 + col * 3) + '^');
+            Console.ForegroundColor = move.DisplayColor();
+            Console.WriteLine(new String(' ', move.Col * 3 + 9) + '^');
+            Console.ResetColor();
         }
 
     }

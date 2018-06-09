@@ -12,7 +12,7 @@ namespace ConnectFour.Agents
     class RandomAgent : Agent
     {
         // Call base constructor
-        public RandomAgent(Color player) : base(player) { }
+        public RandomAgent(Token player) : base(player) { }
 
 
         // Selects a random column from the columns with available moves

@@ -9,14 +9,14 @@ namespace ConnectFour.Agents
 {
     class MinimaxAgent : Agent
     {
-        private const double DECAY_RATE = 0.5;
+        private const int DECAY = 2;
 
         // Total count of iterations of MinVal or MaxVal
         public int MinimaxCount { get; private set; }
         public int PlyDepth { get; }
 
         // Overrides the base constructor
-        public MinimaxAgent(Color player, int plyDepth)
+        public MinimaxAgent(Token player, int plyDepth)
             : base(player)
         {
             PlyDepth = plyDepth;
@@ -31,7 +31,7 @@ namespace ConnectFour.Agents
             if (board.NumTokens == 0)
             {
                 // Yes; just pick the middle position
-                move = new Move(Color.Red, 3, 0);
+                move = new Move(Token.Red, 3, 0);
             }
             else
             {
@@ -63,33 +63,33 @@ namespace ConnectFour.Agents
             MinimaxCount++;
 
             // Create a worst-case action with a score of "negative infinity"
-            Move best = new Move(Color.Red, -1, int.MinValue);
+            Move best = new Move(Token.Red, -1, int.MinValue);
 
             // Iterate through each column that isn't already full
             var moves = board.GetAvailableMoves();
             foreach (int col in moves)
             {
                 // Insert Red's token in column and check for victory
-                bool success = board.Insert(Color.Red, col);
+                bool success = board.Insert(Token.Red, col);
 
                 // Are we in a leaf-node state (success or end-of-search)?
                 if (success)
                 {
                     // Yes, winning state found
-                    best = new Move(Color.Red, col, int.MaxValue);
+                    best = new Move(Token.Red, col, int.MaxValue);
                 }
                 else if (depth == 0)
                 {
                     // Yes, out of search space (return heuristic)
-                    best = new Move(Color.Red, col, Heuristic(board, col));
+                    best = new Move(Token.Red, col, Heuristic(board, col));
                 }
                 else
                 {
                     // No; get Yellow's best expected move if we play here
                     Move worst = Min(board, depth - 1);
-                    if (worst.Score * DECAY_RATE > best.Score || best.Col == -1)
+                    if (worst.Score / DECAY > best.Score || best.Col == -1)
                     {
-                        best = new Move(Color.Red, col, (int)(worst.Score * DECAY_RATE));
+                        best = new Move(Token.Red, col, worst.Score / DECAY);
                     }
                 }
 
@@ -113,33 +113,33 @@ namespace ConnectFour.Agents
             MinimaxCount++;
 
             // Create a worst-case action with a score of "positive infinity"
-            Move best = new Move(Color.Yel, -1, int.MaxValue);
+            Move best = new Move(Token.Yel, -1, int.MaxValue);
 
             // Iterate through each column that isn't already full
             var moves = board.GetAvailableMoves();
             foreach (int col in moves)
             {
                 // Insert Yellow's token in column and check for victory
-                bool success = board.Insert(Color.Yel, col);
+                bool success = board.Insert(Token.Yel, col);
 
                 // Are we in a leaf-node state (success or end-of-search)?
                 if (success)
                 {
                     // Yes, winning state found
-                    best = new Move(Color.Yel, col, int.MinValue);
+                    best = new Move(Token.Yel, col, int.MinValue);
                 }
                 else if (depth == 0)
                 {
                     // Yes, out of search space (return heuristic)
-                    best = new Move(Color.Yel, col, Heuristic(board, col));
+                    best = new Move(Token.Yel, col, Heuristic(board, col));
                 }
                 else
                 {
                     // No; get Red's best expected move if we play here
                     Move worst = Max(board, depth - 1);
-                    if (worst.Score < best.Score || best.Col == -1)
+                    if (worst.Score / DECAY < best.Score || best.Col == -1)
                     {
-                        best = new Move(Color.Yel, col, worst.Score);
+                        best = new Move(Token.Yel, col, worst.Score / DECAY);
                     }
                 }
 

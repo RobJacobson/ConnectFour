@@ -14,7 +14,7 @@ namespace ConnectFour
         static int CalcScoreCol(int col, Board board)
         {
             int size = board.Height;
-            Color[] tokens = new Color[size];
+            Token[] tokens = new Token[size];
             for (int row = 0; row < size; row++)
             {
                 tokens[row] = board.Grid[col, row];
@@ -26,7 +26,7 @@ namespace ConnectFour
         static int CalcScoreRow(int row, Board board)
         {
             int size = board.Width;
-            Color[] tokens = new Color[size];
+            Token[] tokens = new Token[size];
             for (int col = 0; col < size; col++)
             {
                 tokens[row] = board.Grid[col, row];
@@ -47,7 +47,7 @@ namespace ConnectFour
         }
 
         // Returns a score for possible winning positions in array
-        static int CalcScore(Color[] tokens)
+        static int CalcScore(Token[] tokens)
         {
             int score = 0;
             int redCount = 0;
@@ -59,8 +59,8 @@ namespace ConnectFour
                 // Add a count for the token entering the window
                 switch (tokens[i])
                 {
-                    case Color.Red:  redCount++;  break;
-                    case Color.Yel:  yelCount++;  break;
+                    case Token.Red:  redCount++;  break;
+                    case Token.Yel:  yelCount++;  break;
                 }
 
                 // Assign score for the current four tokens in a moving window
@@ -69,8 +69,8 @@ namespace ConnectFour
                     // Subtract a count for the token departing the window
                     switch (tokens[i - 4])
                     {
-                        case Color.Red:  redCount--;  break;
-                        case Color.Yel:  yelCount--;  break;
+                        case Token.Red:  redCount--;  break;
+                        case Token.Yel:  yelCount--;  break;
                     }
 
                     // Ensure we're counting four tokens max

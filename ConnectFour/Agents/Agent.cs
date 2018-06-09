@@ -12,7 +12,7 @@ namespace ConnectFour.Agents
     public abstract class Agent
     {
         // The token color for this agent
-        public Color Token { get; }
+        public Token Token { get; }
 
         // A shared random-number generator for all agents
         protected static Random Randomizer { get; private set; } = new Random();
@@ -21,7 +21,7 @@ namespace ConnectFour.Agents
         public Stopwatch Clock { get; }
       
         // Base constructor to assign the player's color
-        public Agent(Color token)
+        public Agent(Token token)
         {
             Token = token;
             Clock = new Stopwatch();
@@ -51,10 +51,10 @@ namespace ConnectFour.Agents
 
 
         // Counts the given player's tokens in the given array slice
-        public int Count(Color player, IEnumerable<Color> slice)
+        public int Count(Token player, IEnumerable<Token> slice)
         {
             int count = 0;
-            foreach (Color token in slice)
+            foreach (Token token in slice)
             {
                 if (token == player)
                 {

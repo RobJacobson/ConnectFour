@@ -10,8 +10,8 @@ namespace ConnectFour
 {
     class GameEngine
     {
-        private readonly Board board;
-        private readonly List<Move> moves;
+        public Board Board { get; }
+        public List<Move> Moves { get; }
         private readonly Agent player1;
         private readonly Agent player2;
         private readonly bool verbose;
@@ -22,8 +22,8 @@ namespace ConnectFour
         {
             this.player1 = player1;
             this.player2 = player2;
-            this.moves   = new List<Move>();
-            this.board   = new Board(cols, rows);
+            this.Moves   = new List<Move>();
+            this.Board   = new Board(cols, rows);
             this.verbose = verbose;
         }
 
@@ -34,18 +34,18 @@ namespace ConnectFour
             Move move = null;
 
             // Iterate through the maximum number of moves on board
-            int maxTurns = board.Width * board.Height;
+            int maxTurns = Board.Width * Board.Height;
             for (int turn = 0; turn < maxTurns; turn++)
             {
                 // Get the agent for current player (player 1 first)
                 Agent player = (turn % 2 == 0) ? player1 : player2;
 
                 // Get next play from agent
-                move = player.GetNextMove(board);
-                moves.Add(move);
+                move = player.GetNextMove(Board);
+                Moves.Add(move);
 
                 // Drop token into selected column and test for goal
-                bool winner = board.Insert(player.Token, move.Col);
+                bool winner = Board.Insert(player.Token, move.Col);
 
                 // Draw updated board if in 'verbose mode'
                 if (verbose)
@@ -70,8 +70,8 @@ namespace ConnectFour
         public void DisplayMove(Move move)
         {
             // Print a colorized version of the board with a caret
-            board.ShowBoard();
-            board.ShowCaret(move.Col, move.DisplayColor());
+            Board.ShowBoard();
+            Board.ShowCaret(move);
 
             // Display a textual summary of the move
             Console.ResetColor();

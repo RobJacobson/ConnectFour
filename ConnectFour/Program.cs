@@ -12,11 +12,11 @@ namespace ConnectFour
     class Program
     {
 
-        const string MODE = "Select game mode (b for batch mode, s for single game)";
-        const string NUMBER = "Select number of iterations:";
-        const string VERBOSE = "Display each move? (y or n)";
-        const string END_GAME = "New game? (r to replay, n for new game, m for main menu, q to quit)";
-        const string END_TEST = "Run test again? (r to run test, m for main menu, q to quit)";
+        const string MODE     = "Select game mode (S for single game, T for tournament)";
+        const string NUMBER   = "Select number of iterations:";
+        const string VERBOSE  = "Display each move? (Y or N)";
+        const string END_GAME = "New game? (R to replay, N for new game, M for main menu, Q to quit)";
+        const string END_TEST = "New tournament? (N for new tournament, M for main menu, Q to quit)";
 
         const double MINIMAX_DECAY = 1;
 
@@ -44,15 +44,15 @@ namespace ConnectFour
         private static void MainMenu()
         {
             // Prompt for game mode (batch or single-game)
-            char key = PromptChar(MODE, new char[] { 'b', 's' });
+            char key = PromptChar(MODE, new char[] { 's', 't' });
             Console.WriteLine();
 
             // Prompt for type of each agent and create agents
-            Agent agent1 = SelectAgent("Red", Color.Red);
-            Agent agent2 = SelectAgent("Yellow", Color.Yel);
+            Agent agent1 = SelectAgent("Red", Token.Red);
+            Agent agent2 = SelectAgent("Yellow", Token.Yel);
 
             // Start the appropriate game mode
-            if (key == 'b')
+            if (key == 't')
             {
                 PlayBatch(agent1, agent2);
             }
@@ -81,14 +81,14 @@ namespace ConnectFour
 
                 // Start one game and play until it ends
                 Move winner = game.Start();
-                ShowResult(winner);
+                ShowResult(game.Board, game.Moves, winner);
 
                 // Count the number of victories per side
                 if (winner == null)
                 {
                     draw++;
                 }
-                else if (winner.Token == Color.Red)
+                else if (winner.Token == Token.Red)
                 {
                     redWins++;
                 }
@@ -121,7 +121,7 @@ namespace ConnectFour
 
                 // Start one game and play until it ends
                 Move winner = game.Start();
-                ShowResult(winner);
+                ShowResult(game.Board, game.Moves, winner);
 
                 // Play another game?
                 char key = PromptChar(END_GAME, new char[] { 'r', 'n', 'm', 'q' });
@@ -146,8 +146,15 @@ namespace ConnectFour
         }
 
         // Display winner and prompt for next game options
-        private static void ShowResult(Move winner)
+        private static void ShowResult(Board board, List<Move> moves, Move winner)
         {
+            // Show board
+            board.ShowBoard();
+            board.ShowCaret(moves.Last());
+
+            // Print final turn number
+            Console.Write(board.NumTokens + ": ");
+
             // Display winner
             if (winner == null)
             {
@@ -171,6 +178,7 @@ namespace ConnectFour
                 response = Char.ToLower(Console.ReadKey().KeyChar);
             } while (!validChars.Contains(response));
             Console.WriteLine();
+            Console.WriteLine();
             return response;
         }
 
@@ -191,7 +199,7 @@ namespace ConnectFour
 
 
         // Prompts user to select agent, then creates and returns new agent
-        private static Agent SelectAgent(string player, Color token)
+        private static Agent SelectAgent(string player, Token token)
         {
             // Display "select agent" message and wait for input
             Console.WriteLine($"Enter Player {player} paramaters:");
@@ -208,7 +216,7 @@ namespace ConnectFour
 
 
         // Factory method to return agent from command-line parameter
-        private static Agent AgentFactory(char number, Color token)
+        private static Agent AgentFactory(char number, Token token)
         {
             int plies = 0;
             switch (number)
