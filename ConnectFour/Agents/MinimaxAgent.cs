@@ -9,7 +9,9 @@ namespace ConnectFour.Agents
 {
     class MinimaxAgent : AbstractAgent
     {
-        private const int DECAY = 2;
+        private static int DECAY       = 2;
+        private static int PERFECT_RED =  (int)Math.Pow(2, 30);
+        private static int PERFECT_YEL = -(int)Math.Pow(2, 30);
 
         // Total count of iterations of MinVal or MaxVal
         public int MinimaxCount { get; private set; }
@@ -62,8 +64,8 @@ namespace ConnectFour.Agents
             // Count each iteration of Minimax for diagnostics
             MinimaxCount++;
 
-            // Create a worst-case action with a score of "negative infinity"
-            Move best = new Move(Token.Red, -1, int.MinValue);
+            // Start by assuming a worst-case score.
+            Move best = new Move(Token.Red, -1, PERFECT_YEL);
 
             // Iterate through each column that isn't already full
             var moves = board.GetAvailableMoves();
@@ -75,8 +77,8 @@ namespace ConnectFour.Agents
                 // Are we in a leaf-node state (success or end-of-search)?
                 if (success)
                 {
-                    // Yes, winning state found
-                    best = new Move(Token.Red, col, int.MaxValue);
+                    // Yes, winning state found; re undiscounted score
+                    best = new Move(Token.Red, col, PERFECT_RED);
                 }
                 else if (depth == 0)
                 {
@@ -85,11 +87,12 @@ namespace ConnectFour.Agents
                 }
                 else
                 {
-                    // No; get Yellow's best expected move if we play here
+                    // No; get our "best worst" score recursively from Min
                     Move worst = Min(board, depth - 1);
-                    if (worst.Score / DECAY > best.Score || best.Col == -1)
+                    int discountScore = worst.Score / DECAY;
+                    if (discountScore > best.Score || best.Col == -1)
                     {
-                        best = new Move(Token.Red, col, worst.Score / DECAY);
+                        best = new Move(Token.Red, col, discountScore);
                     }
                 }
 
@@ -97,7 +100,7 @@ namespace ConnectFour.Agents
                 board.Remove(col);
 
                 // If we found perfect move, return it (no need to search further)
-                if (best.Score == int.MaxValue)
+                if (best.Score == PERFECT_RED)
                 {
                     return best;
                 }
@@ -113,7 +116,7 @@ namespace ConnectFour.Agents
             MinimaxCount++;
 
             // Create a worst-case action with a score of "positive infinity"
-            Move best = new Move(Token.Yel, -1, int.MaxValue);
+            Move best = new Move(Token.Yel, -1, PERFECT_RED);
 
             // Iterate through each column that isn't already full
             var moves = board.GetAvailableMoves();
@@ -126,7 +129,7 @@ namespace ConnectFour.Agents
                 if (success)
                 {
                     // Yes, winning state found
-                    best = new Move(Token.Yel, col, int.MinValue);
+                    best = new Move(Token.Yel, col, PERFECT_YEL);
                 }
                 else if (depth == 0)
                 {
@@ -135,19 +138,21 @@ namespace ConnectFour.Agents
                 }
                 else
                 {
-                    // No; get Red's best expected move if we play here
+                    // No; get our "best worst" score recursively from Max
                     Move worst = Max(board, depth - 1);
-                    if (worst.Score / DECAY < best.Score || best.Col == -1)
+                    int discountScore = worst.Score / DECAY;
+                    if (discountScore < best.Score || best.Col == -1)
                     {
-                        best = new Move(Token.Yel, col, worst.Score / DECAY);
+                        best = new Move(Token.Yel, col, discountScore);
                     }
+
                 }
 
                 // Remove the token placed above to restore prior state
                 board.Remove(col);
 
                 // If we found perfect move, return it (no need to search more)
-                if (best.Score == int.MinValue)
+                if (best.Score == PERFECT_YEL)
                 {
                     return best;
                 }
