@@ -50,7 +50,7 @@ namespace ConnectFour
                 // Draw updated board if in 'verbose mode'
                 if (verbose)
                 {
-                    DisplayMove(move);
+                    Output.ShowMove(Board, move);
                 }
 
                 // Return if this player has won
@@ -66,18 +66,6 @@ namespace ConnectFour
         }
 
 
-        // Shows the board as colorized ASCII art with description of move
-        public void DisplayMove(Move move)
-        {
-            // Print a colorized version of the board with a caret
-            Board.ShowBoard();
-            Board.ShowCaret(move);
-
-            // Display a textual summary of the move
-            Console.ResetColor();
-            Console.WriteLine(move);
-            Console.WriteLine();
-        }
 
     }
 }

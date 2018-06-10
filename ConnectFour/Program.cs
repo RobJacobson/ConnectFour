@@ -149,8 +149,7 @@ namespace ConnectFour
         private static void ShowResult(Board board, List<Move> moves, Move winner)
         {
             // Show board
-            board.ShowBoard();
-            board.ShowCaret(moves.Last());
+            Output.ShowMove(board, moves.Last());
 
             // Print final turn number
             Console.Write(board.NumTokens + ": ");

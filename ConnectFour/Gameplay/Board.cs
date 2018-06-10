@@ -327,7 +327,7 @@ namespace ConnectFour.Gameplay
 
 
         // Returns a string representation of one row of the board
-        private string GetRowText(int row)
+        public string GetRowText(int row)
         {
             var sb = new StringBuilder();
             for (int col = 0; col < Width; col++)
@@ -342,68 +342,6 @@ namespace ConnectFour.Gameplay
             return sb.ToString();
         }
 
-
-        // Returns a textual representation of the gameboard as ASCII art
-        public string ToStringASCII()
-        {
-            var sb = new StringBuilder();
-
-            // Append the top border
-            sb.AppendLine("      ╔═" + new string('═', Width * 3) + "═╗");
-
-            // Append each row (last row first)
-            for (int row = Height - 1; row >= 0; row--)
-            {
-                sb.Append($"  { row }:\t");
-                sb.Append("║\t");
-                sb.Append(GetRowText(row));
-                sb.Append("║\t");
-                sb.AppendLine();
-            }
-
-            // Append bottom border and list of column numbers
-            sb.AppendLine("      ╠═" + new string('═', Width * 3) + "═╣ ");
-            sb.Append("      ╩  ");
-            sb.Append(String.Join("  ", Enumerable.Range(0, Width)));
-            sb.Append("  ╩ ");
-            sb.AppendLine();
-
-            return sb.ToString();
-        }
-
-
-        // Prints a colorized representation of the ASCII-art text to console
-        public void ShowBoard()
-        {
-            // Shift 
-
-            // Move the cursor to the upper-left corner of console.
-            Console.SetCursorPosition(0, 0);
-
-            // Get ASCII art representation and iterate through each character
-            foreach (char c in this.ToStringASCII().Replace("\t", "  ").ToArray())
-            {
-                // Select appropriate color for character and print to console
-                ConsoleColor foreground;
-                switch (c)
-                {
-                    case 'O': foreground = ConsoleColor.Red; break;
-                    case 'X': foreground = ConsoleColor.Yellow; break;
-                    default:  foreground = ConsoleColor.DarkBlue; break;
-                }
-                Console.ForegroundColor = foreground;
-                Console.Write(c);
-            }
-            Console.ResetColor();
-        }
-
-        // Print a caret to show the current column played
-        public void ShowCaret(Move move)
-        {
-            Console.ForegroundColor = move.DisplayColor();
-            Console.WriteLine(new String(' ', move.Col * 3 + 9) + '^');
-            Console.ResetColor();
-        }
 
     }
 }
