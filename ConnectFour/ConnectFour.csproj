@@ -44,7 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Agents\Agent.cs" />
+    <Compile Include="Agents\AbstractAgent.cs" />
     <Compile Include="Agents\MinimaxAgent.cs" />
     <Compile Include="Agents\MinimaxKnnAgent.cs" />
     <Compile Include="Agents\MinimaxRandomAgent.cs" />

@@ -7,7 +7,7 @@ using ConnectFour.Gameplay;
 
 namespace ConnectFour.Agents
 {
-    class MinimaxAgent : Agent
+    class MinimaxAgent : AbstractAgent
     {
         private const int DECAY = 2;
 

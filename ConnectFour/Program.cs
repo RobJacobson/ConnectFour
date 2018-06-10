@@ -48,8 +48,8 @@ namespace ConnectFour
             Console.WriteLine();
 
             // Prompt for type of each agent and create agents
-            Agent agent1 = SelectAgent("Red", Token.Red);
-            Agent agent2 = SelectAgent("Yellow", Token.Yel);
+            AbstractAgent agent1 = SelectAgent("Red", Token.Red);
+            AbstractAgent agent2 = SelectAgent("Yellow", Token.Yel);
 
             // Start the appropriate game mode
             if (key == 't')
@@ -62,7 +62,7 @@ namespace ConnectFour
             }
         }
 
-        private static void PlayBatch(Agent agent1, Agent agent2)
+        private static void PlayBatch(AbstractAgent agent1, AbstractAgent agent2)
         {
             // Prompt for the number of batch repetitions
             int reps = PromptInt(NUMBER);
@@ -104,7 +104,7 @@ namespace ConnectFour
             Console.WriteLine();
         }
 
-        private static void PlaySingle(Agent agent1, Agent agent2)
+        private static void PlaySingle(AbstractAgent agent1, AbstractAgent agent2)
         {
             // Get next random seed (we can replay game by reusing this seed)
             var randomSeedGenerator = new Random();
@@ -114,7 +114,7 @@ namespace ConnectFour
             while (true)
             {
                 // Seed the agent's RNG with the current seed
-                Agent.Reseed(seed);
+                AbstractAgent.Reseed(seed);
 
                 // Create and start new game on standard 7 x 6 board
                 GameEngine game = new GameEngine(agent1, agent2, 7, 6, true);
@@ -199,7 +199,7 @@ namespace ConnectFour
 
 
         // Prompts user to select agent, then creates and returns new agent
-        private static Agent SelectAgent(string player, Token token)
+        private static AbstractAgent SelectAgent(string player, Token token)
         {
             // Display "select agent" message and wait for input
             Console.WriteLine($"Enter Player {player} paramaters:");
@@ -210,13 +210,13 @@ namespace ConnectFour
             char input = PromptChar("    ", new char[] { '1', '2', '3', '4', '5' });
 
             // Create and return a new agent using the AgentFactory method
-            Agent agent = AgentFactory(input, token);
+            AbstractAgent agent = AgentFactory(input, token);
             return agent;
         }
 
 
         // Factory method to return agent from command-line parameter
-        private static Agent AgentFactory(char number, Token token)
+        private static AbstractAgent AgentFactory(char number, Token token)
         {
             int plies = 0;
             switch (number)

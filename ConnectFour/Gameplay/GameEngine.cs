@@ -12,13 +12,13 @@ namespace ConnectFour
     {
         public Board Board { get; }
         public List<Move> Moves { get; }
-        private readonly Agent player1;
-        private readonly Agent player2;
+        private readonly AbstractAgent player1;
+        private readonly AbstractAgent player2;
         private readonly bool verbose;
 
 
         // Initialize game with specified agents and board dimensions
-        public GameEngine(Agent player1, Agent player2, int cols, int rows, bool verbose)
+        public GameEngine(AbstractAgent player1, AbstractAgent player2, int cols, int rows, bool verbose)
         {
             this.player1 = player1;
             this.player2 = player2;
@@ -38,7 +38,7 @@ namespace ConnectFour
             for (int turn = 0; turn < maxTurns; turn++)
             {
                 // Get the agent for current player (player 1 first)
-                Agent player = (turn % 2 == 0) ? player1 : player2;
+                AbstractAgent player = (turn % 2 == 0) ? player1 : player2;
 
                 // Get next play from agent
                 move = player.GetNextMove(Board);

@@ -8,7 +8,7 @@ using ConnectFour.Gameplay;
 namespace ConnectFour.Agents
 {
     // Determines next move by promting human player to select a column
-    public class HumanAgent : Agent
+    public class HumanAgent : AbstractAgent
     {
         // Call base constructor
         public HumanAgent(Token player) : base(player) { }

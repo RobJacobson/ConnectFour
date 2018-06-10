@@ -100,7 +100,7 @@ namespace ConnectFour.Gameplay
         // Returns true if there's four-in-a-row in any direction at [col, row]
         //
         // NB: This goal-test function is at the center of the inner loops. 
-        //     This code below is optimized for performance.
+        //     This code below is optimized for performance, not prettiness.
         public bool Success(Token token, int col, int row)
         {
             // Check row (four possible combinations of matches

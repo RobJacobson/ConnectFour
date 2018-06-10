@@ -9,7 +9,7 @@ namespace ConnectFour.Agents
 {
 
     // An agent without any intelligence who just guesses random moves
-    class RandomAgent : Agent
+    class RandomAgent : AbstractAgent
     {
         // Call base constructor
         public RandomAgent(Token player) : base(player) { }

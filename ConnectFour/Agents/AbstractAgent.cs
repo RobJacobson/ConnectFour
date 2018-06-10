@@ -9,7 +9,7 @@ using ConnectFour.Gameplay;
 namespace ConnectFour.Agents
 {
     // Abstract base class for agent
-    public abstract class Agent
+    public abstract class AbstractAgent
     {
         // The token color for this agent
         public Token Token { get; }
@@ -21,7 +21,7 @@ namespace ConnectFour.Agents
         public Stopwatch Clock { get; }
       
         // Base constructor to assign the player's color
-        public Agent(Token token)
+        public AbstractAgent(Token token)
         {
             Token = token;
             Clock = new Stopwatch();
@@ -68,7 +68,7 @@ namespace ConnectFour.Agents
         // Constructs a new RNG using the specified seed
         public static void Reseed(int seed)
         {
-            Agent.Randomizer = new Random(seed);
+            AbstractAgent.Randomizer = new Random(seed);
         }
         
 
