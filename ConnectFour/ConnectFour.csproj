@@ -55,6 +55,7 @@
     <Compile Include="Gameplay\GameEngine.cs" />
     <Compile Include="Agents\HumanAgent.cs" />
     <Compile Include="Gameplay\Color.cs" />
+    <Compile Include="Gameplay\Output.cs" />
     <Compile Include="Gameplay\Point.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

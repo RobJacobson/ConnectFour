@@ -375,6 +375,11 @@ namespace ConnectFour.Gameplay
         // Prints a colorized representation of the ASCII-art text to console
         public void ShowBoard()
         {
+            // Shift 
+
+            // Move the cursor to the upper-left corner of console.
+            Console.SetCursorPosition(0, 0);
+
             // Get ASCII art representation and iterate through each character
             foreach (char c in this.ToStringASCII().Replace("\t", "  ").ToArray())
             {

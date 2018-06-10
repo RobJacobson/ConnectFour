@@ -16,16 +16,14 @@ namespace ConnectFour.Agents
         // Override GetNextMove with custom logic
         public override Move GetNextMoveDerived(Board board)
         {
-            // Prompt for input
-            Console.Write($"{base.Token,-8}> ");
-
-            // Read input and repeat if input was invalid (not a number)
+            // Prompt the user to enter column number
             int col = 0;
-            while (!int.TryParse(Console.ReadLine(), out col))
+            do
             {
                 Console.Write($"{base.Token,-8}> ");
-            }
+            } while (!int.TryParse(Console.ReadLine(), out col));
 
+            // Return that move
             return new Move(Token, col, 0);
         }
 

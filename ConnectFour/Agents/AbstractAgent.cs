@@ -20,6 +20,7 @@ namespace ConnectFour.Agents
         // Stopwatch for timing each agent's moves
         public Stopwatch Clock { get; }
       
+
         // Base constructor to assign the player's color
         public AbstractAgent(Token token)
         {
