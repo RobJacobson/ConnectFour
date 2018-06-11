@@ -24,17 +24,17 @@ namespace ConnectFour.Gameplay
             Output.ShowCaret(board, move);
 
             // Display a summary of the move to the right
-            Output.PrintColor(50, 0, ConsoleColor.White, $"Move: { board.NumTokens } ");
+            Output.PrintColor(3 + board.Width * 3 / 2, 0, ConsoleColor.Gray, $"Move: { board.NumTokens } ");
 
             string[] prediction = move.ToString().Split(new[] { Environment.NewLine }, StringSplitOptions.None);
             for (int i = 0; i < prediction.Length; i++)
             {
-                Output.PrintColor(50, i + 1, ConsoleColor.Gray, prediction[i]);
+                Output.PrintColor(10 + board.Width * 3, i + 1, ConsoleColor.Gray, prediction[i]);
             }
 
 
             // Move cursor to end of the window
-            Console.SetCursorPosition(0, Console.BufferHeight - 5);
+            Console.SetCursorPosition(0, Console.BufferHeight - 3);
 
 
             // Pause momentarily to reduce screen flickering in fast games

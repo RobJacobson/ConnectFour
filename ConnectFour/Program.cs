@@ -23,8 +23,7 @@ namespace ConnectFour
         const double MINIMAX_DECAY = 1;
 
         const string SELECT_AGENT_MESSAGE =
-@"
-Select agent type for {0}:
+@"Select agent type for {0}:
     1. Random-move agent
     2. Minimax agent, no heuristic
     3. Minimax agent, random-number heuristic
@@ -60,6 +59,7 @@ Select agent type for {0}:
             }
             else
             {
+                Output.ScrollUp(40);
                 PlaySingle(agent1, agent2);
             }
         }
@@ -152,9 +152,6 @@ Select agent type for {0}:
         {
             // Show board
             Output.ShowMove(board, moves.Last());
-
-            // Print final turn number
-            Console.Write(board.NumTokens + ": ");
 
             // Display winner
             if (winner == null)
