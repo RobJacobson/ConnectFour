@@ -11,6 +11,9 @@ namespace ConnectFour.Agents
     // Abstract base class for agent
     public abstract class AbstractAgent
     {
+        // Define one point as equal to 2^16 to survive the discounting process
+        public const int POINT_VAL = 65536;
+
         // The token color for this agent
         public Token Token { get; }
 

@@ -33,7 +33,7 @@ namespace ConnectFour.Agents
             if (board.NumTokens == 0)
             {
                 // Yes; just pick the middle position
-                move = new Move(Token.Red, 3, 0);
+                move = new Move(Token.Red, 3, 0, null);
             }
             else
             {
@@ -52,7 +52,7 @@ namespace ConnectFour.Agents
 
 
         // Non-implemented heuristic (equivalent to no heuristic)
-        public virtual int Heuristic(Board board, int column)
+        public virtual int Heuristic(Board board, int column, Token player)
         {
             return 0;
         }
@@ -65,7 +65,7 @@ namespace ConnectFour.Agents
             MinimaxCount++;
 
             // Start by assuming a worst-case score.
-            Move best = new Move(Token.Red, -1, PERFECT_YEL);
+            Move best = new Move(Token.Red, -1, PERFECT_YEL, null);
 
             // Iterate through each column that isn't already full
             var moves = board.GetAvailableMoves();
@@ -77,13 +77,17 @@ namespace ConnectFour.Agents
                 // Are we in a leaf-node state (success or end-of-search)?
                 if (success)
                 {
-                    // Yes, winning state found; re undiscounted score
-                    best = new Move(Token.Red, col, PERFECT_RED);
+                    // Yes, winning state found; return undiscounted score
+                    best = new Move(Token.Red, col, PERFECT_RED, null);
                 }
                 else if (depth == 0)
                 {
-                    // Yes, out of search space (return heuristic)
-                    best = new Move(Token.Red, col, Heuristic(board, col));
+                    // Yes, out of search space (check heuristic)
+                    int score = Heuristic(board, col, Token.Red);
+                    if (score > best.Score)
+                    {
+                        best = new Move(Token.Red, col, score, null);
+                    }
                 }
                 else
                 {
@@ -92,7 +96,7 @@ namespace ConnectFour.Agents
                     int discountScore = worst.Score / DECAY;
                     if (discountScore > best.Score || best.Col == -1)
                     {
-                        best = new Move(Token.Red, col, discountScore);
+                        best = new Move(Token.Red, col, discountScore, worst);
                     }
                 }
 
@@ -116,7 +120,7 @@ namespace ConnectFour.Agents
             MinimaxCount++;
 
             // Create a worst-case action with a score of "positive infinity"
-            Move best = new Move(Token.Yel, -1, PERFECT_RED);
+            Move best = new Move(Token.Yel, -1, PERFECT_RED, null);
 
             // Iterate through each column that isn't already full
             var moves = board.GetAvailableMoves();
@@ -129,12 +133,16 @@ namespace ConnectFour.Agents
                 if (success)
                 {
                     // Yes, winning state found
-                    best = new Move(Token.Yel, col, PERFECT_YEL);
+                    best = new Move(Token.Yel, col, PERFECT_YEL, null);
                 }
                 else if (depth == 0)
                 {
-                    // Yes, out of search space (return heuristic)
-                    best = new Move(Token.Yel, col, Heuristic(board, col));
+                    // Yes, out of search space (check heuristic)
+                    int score = Heuristic(board, col, Token.Red);
+                    if (score < best.Score)
+                    {
+                        best = new Move(Token.Red, col, score, null);
+                    }
                 }
                 else
                 {
@@ -143,9 +151,8 @@ namespace ConnectFour.Agents
                     int discountScore = worst.Score / DECAY;
                     if (discountScore < best.Score || best.Col == -1)
                     {
-                        best = new Move(Token.Yel, col, discountScore);
+                        best = new Move(Token.Yel, col, discountScore, worst);
                     }
-
                 }
 
                 // Remove the token placed above to restore prior state

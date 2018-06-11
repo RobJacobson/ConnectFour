@@ -24,7 +24,7 @@ namespace ConnectFour.Agents
             } while (!int.TryParse(Console.ReadLine(), out col));
 
             // Return that move
-            return new Move(Token, col, 0);
+            return new Move(Token, col, 0, null);
         }
 
     }

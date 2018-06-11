@@ -342,6 +342,5 @@ namespace ConnectFour.Gameplay
             return sb.ToString();
         }
 
-
     }
 }

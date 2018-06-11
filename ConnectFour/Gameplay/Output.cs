@@ -16,16 +16,26 @@ namespace ConnectFour.Gameplay
         public static void ShowMove(Board board, Move move)
         {
             // Scroll the console up to keep a record of last move
-            ScrollUp(board.Height + 25);
+            ScrollUp(board.Height + 10);
 
             // Print a colorized version of the board with a caret
             Output.ShowFrame(board);
             Output.ShowTokens(board);
             Output.ShowCaret(board, move);
 
-            // Display a textual summary of the move
-            Console.ResetColor();
-            Console.WriteLine(move);
+            // Display a summary of the move to the right
+            Output.PrintColor(50, 0, ConsoleColor.White, $"Move: { board.NumTokens } ");
+
+            string[] prediction = move.ToString().Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+            for (int i = 0; i < prediction.Length; i++)
+            {
+                Output.PrintColor(50, i + 1, ConsoleColor.Gray, prediction[i]);
+            }
+
+
+            // Move cursor to end of the window
+            Console.SetCursorPosition(0, Console.BufferHeight - 5);
+
 
             // Pause momentarily to reduce screen flickering in fast games
             System.Threading.Thread.Sleep(250);

@@ -12,24 +12,26 @@ namespace ConnectFour
     class Program
     {
 
-        const string MODE     = "Select game mode (S for single game, T for tournament)";
-        const string NUMBER   = "Select number of iterations:";
-        const string VERBOSE  = "Display each move? (Y or N)";
-        const string END_GAME = "New game? (R to replay, N for new game, M for main menu, Q to quit)";
-        const string END_TEST = "New tournament? (N for new tournament, M for main menu, Q to quit)";
+        const string MODE      = "Select game mode (S for single game, T for tournament)";
+        const string NUMBER    = "    Select number of iterations:";
+        const string VERBOSE   = "    Display each move? (Y or N)";
+        const string END_GAME  = "    New game? (R to replay, N for new game, M for main menu, Q to quit)";
+        const string END_TEST  = "    New tournament? (N for new tournament, M for main menu, Q to quit)";
+        const string PLY_DEPTH = "    Ply depth for MiniMax:";
+        const string CARET     = "    > ";
 
         const double MINIMAX_DECAY = 1;
 
-        static string[] SELECT_AGENT_MESSAGE =
-        {
-            "    Select player type:",
-            "      1. Random-move agent",
-            "      2. Minimax agent, no heuristic",
-            "      3. Minimax agent, random-number heuristic",
-            "      4. Minimax agent, nearest-neighbor heuristic",
-            "      4. Puny human",
-            ""
-        };
+        const string SELECT_AGENT_MESSAGE =
+@"
+Select agent type for {0}:
+    1. Random-move agent
+    2. Minimax agent, no heuristic
+    3. Minimax agent, random-number heuristic
+    4. Minimax agent, 1-nn heuristic
+    5. Minimax agent, 2-nn heuristic
+    6. Minimax agent, 3-nn heuristic
+    7. Puny human";
 
 
         static void Main(string[] args)
@@ -171,9 +173,10 @@ namespace ConnectFour
         private static char PromptChar(string prompt, char[] validChars)
         {
             char response;
-            Console.Write(prompt + "  > ");
+            Console.WriteLine(prompt);
             do
             {
+                Console.Write(CARET);
                 response = Char.ToLower(Console.ReadKey().KeyChar);
             } while (!validChars.Contains(response));
             Console.WriteLine();
@@ -187,9 +190,10 @@ namespace ConnectFour
         {
             string response;
             int result;
+            Console.WriteLine(prompt);
             do
             {
-                Console.Write(prompt + "  > ");
+                Console.Write(CARET);
                 response = Console.ReadLine();
             } while (!Int32.TryParse(response, out result));
             Console.WriteLine();
@@ -201,41 +205,47 @@ namespace ConnectFour
         private static AbstractAgent SelectAgent(string player, Token token)
         {
             // Display "select agent" message and wait for input
-            Console.WriteLine($"Enter Player {player} paramaters:");
-            foreach (string line in SELECT_AGENT_MESSAGE)
-            {
-                Console.WriteLine(line);
-            }
-            char input = PromptChar("    ", new char[] { '1', '2', '3', '4', '5' });
+            string prompt = String.Format(SELECT_AGENT_MESSAGE, player);
+
+            // Prompt and get value from user
+            int agentNo = PromptInt(prompt);
 
             // Create and return a new agent using the AgentFactory method
-            AbstractAgent agent = AgentFactory(input, token);
+            AbstractAgent agent = AgentFactory(agentNo, token);
             return agent;
         }
 
 
         // Factory method to return agent from command-line parameter
-        private static AbstractAgent AgentFactory(char number, Token token)
+        private static AbstractAgent AgentFactory(int agentNo, Token token)
         {
             int plies = 0;
-            switch (number)
+            switch (agentNo)
             {
-                case '1':
+                case 1:
                     return new RandomAgent(token);
 
-                case '2':
-                    plies = PromptInt("     Ply depth for MiniMax:");
+                case 2:
+                    plies = PromptInt(PLY_DEPTH);
                     return new MinimaxAgent(token, plies);
 
-                case '3':
-                    plies = PromptInt("     Ply depth for MiniMax:");
+                case 3:
+                    plies = PromptInt(PLY_DEPTH);
                     return new MinimaxRandomAgent(token, plies);
 
-                case '4':
-                    plies = PromptInt("     Ply depth for MiniMax:");
-                    return new MinimaxKnnAgent(token, plies);
+                case 4:
+                    plies = PromptInt(PLY_DEPTH);
+                    return new MinimaxKnnAgent(token, plies, 1);
 
-                case '5':
+                case 5:
+                    plies = PromptInt(PLY_DEPTH);
+                    return new MinimaxKnnAgent(token, plies, 2);
+
+                case 6:
+                    plies = PromptInt(PLY_DEPTH);
+                    return new MinimaxKnnAgent(token, plies, 3);
+
+                case 7:
                     return new HumanAgent(token);
             }
             throw new ArgumentException($"Invalid agent number");

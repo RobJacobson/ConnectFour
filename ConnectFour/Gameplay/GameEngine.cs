@@ -31,8 +31,6 @@ namespace ConnectFour
         // Initiates a game and continues until one player wins or board full
         public Move Start()
         {
-            Move move = null;
-
             // Iterate through the maximum number of moves on board
             int maxTurns = Board.Width * Board.Height;
             for (int turn = 0; turn < maxTurns; turn++)
@@ -40,8 +38,8 @@ namespace ConnectFour
                 // Get the agent for current player (player 1 first)
                 AbstractAgent player = (turn % 2 == 0) ? player1 : player2;
 
-                // Get next play from agent
-                move = player.GetNextMove(Board);
+                // Get next play from agent and save it
+                Move move = player.GetNextMove(Board);
                 Moves.Add(move);
 
                 // Drop token into selected column and test for goal

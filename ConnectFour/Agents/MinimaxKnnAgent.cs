@@ -10,73 +10,77 @@ namespace ConnectFour.Agents
 
     class MinimaxKnnAgent : MinimaxAgent
     {
-        private int k;
 
+        private int K { get; }
 
-        // A list of offsets for the relevant ordinal directions
-        // (North is not included because this token must be at top of stack)
-        readonly List<Point> directions = new List<Point>
-        {
-            new Point( 1,  1),       // Northeast
-            new Point( 1,  0),       // East
-            new Point( 1, -1),       // Southeast
-            new Point( 0, -1),       // South
-            new Point(-1, -1),       // Southwest
-            new Point(-1,  0),       // West
-            new Point(-1,  1)        // Northwest
-        };
-
-        public MinimaxKnnAgent(Token player, int plyDepth)
+        public MinimaxKnnAgent(Token player, int plyDepth, int k)
             : base(player, plyDepth)
         {
-            this.k = 1;
+            this.K = k;
         }
 
-        public override int Heuristic(Board board, int col)
+        public override int Heuristic(Board board, int col, Token player)
         {
             int row = board.ColHeight[col] - 1;
             int score = 0;
 
-            // Get scores from every direction except North
-            foreach (var direction in directions)
+            // Score each of the eight immediately-adjacent squares
+            score += GetScore(board, col + 0, row + 1, player);
+            score += GetScore(board, col + 1, row + 1, player);
+            score += GetScore(board, col + 1, row + 0, player);
+            score += GetScore(board, col + 1, row - 1, player);
+            score += GetScore(board, col + 0, row - 1, player);
+            score += GetScore(board, col - 1, row - 1, player);
+            score += GetScore(board, col - 1, row + 0, player);
+            score += GetScore(board, col - 1, row + 1, player);
+
+            // For k > 1, score the one-step-removed tokens
+            if (K > 1)
             {
-                // Copy current coordinates for the neighbor
-                int ncol = col;
-                int nrow = row;
-
-                for (int i = 0; i < k; i++)
-                {
-                    // Update the row and column of the neighbor
-                    ncol += direction.Col;
-                    nrow += direction.Row;
-
-                    // Are we within bounds of the board?
-                    if (ncol >= 0 && nrow >= 0 && ncol < board.Width && nrow < board.Height)
-                    {
-                        // Yes; add score of one for empty square, two for match
-                        Token neighbor = board[ncol, nrow];
-                        if (neighbor == Token.None)
-                        {
-                            // Award one point for an empty neighbor
-                            score += 1;
-                        }
-                        else if (neighbor == this.Token)
-                        {
-                            // Award two points for a matching neighbor
-                            score += 2;
-                        }
-                        else
-                        {
-                            // Exit loop for opponent as neighbor
-                            break;
-                        }
-                    }
-                }
-
+                score += GetScore(board, col + 0, row + 2, player);
+                score += GetScore(board, col + 2, row + 2, player);
+                score += GetScore(board, col + 2, row + 0, player);
+                score += GetScore(board, col + 2, row - 2, player);
+                score += GetScore(board, col + 0, row - 2, player);
+                score += GetScore(board, col - 2, row - 2, player);
+                score += GetScore(board, col - 2, row + 0, player);
+                score += GetScore(board, col - 2, row + 2, player);
             }
 
-            return score;
+            // For k > 2, score the two-step-removed tokens
+            if (K > 2)
+            {
+                score += GetScore(board, col + 0, row + 3, player);
+                score += GetScore(board, col + 3, row + 3, player);
+                score += GetScore(board, col + 3, row + 0, player);
+                score += GetScore(board, col + 3, row - 3, player);
+                score += GetScore(board, col + 0, row - 3, player);
+                score += GetScore(board, col - 3, row - 3, player);
+                score += GetScore(board, col - 3, row + 0, player);
+                score += GetScore(board, col - 3, row + 3, player);
+            }
+            return score * POINT_VAL;
         }
 
+        // Returns a score for the given token. 
+        private int GetScore(Board board, int col, int row, Token player) 
+        {
+            // Validate that this position is within bounds of the board
+            if (col >= 0 && row >= 0 && col < board.Width && row < board.Height)
+            {
+                Token square = board.Grid[col, row];
+                if (square == Token.None)
+                {
+                    return (player == Token.Red) ? 1 : -1;
+                }
+                if (square == player)
+                {
+                    return (player == Token.Red) ? 2 : -2;
+                }
+            }
+            
+            // Return no points if outside bounds
+            return 0;
+        }
     }
 }

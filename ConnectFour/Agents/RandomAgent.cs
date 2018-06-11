@@ -23,7 +23,7 @@ namespace ConnectFour.Agents
 
             // Return a random member of the list
             int r = Randomizer.Next(0, moves.Count);
-            return new Move(Token, r, 0);            
+            return new Move(Token, moves[r], 0, null);            
         }
     }
 }
