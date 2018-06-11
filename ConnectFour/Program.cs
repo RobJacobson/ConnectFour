@@ -18,10 +18,8 @@ namespace ConnectFour
         const string END_GAME  = "    New game? (R to replay, N for new game, M for main menu, Q to quit)";
         const string END_TEST  = "    New tournament? (N for new tournament, M for main menu, Q to quit)";
         const string PLY_DEPTH = "    Ply depth for MiniMax:";
+        const string START     = "Game {0}: {1} vs. {2}";
         const string CARET     = "    > ";
-
-        const double MINIMAX_DECAY = 1;
-
         const string SELECT_AGENT_MESSAGE =
 @"Select agent type for {0}:
     1. Random-move agent
@@ -80,7 +78,7 @@ namespace ConnectFour
             {
                 // Create and start new game on standard 7 x 6 board
                 var game = new GameEngine(agent1, agent2, 7, 6, false);
-                Console.Write("Game {rep}: ");
+                Console.Write(String.Format(START, rep, agent1, agent2));
 
                 // Start one game and play until it ends
                 Move winner = game.Start();
@@ -116,8 +114,9 @@ namespace ConnectFour
             // Get next random seed (we can replay game by reusing this seed)
             var randomSeedGenerator = new Random();
             int seed = randomSeedGenerator.Next();
+            int count = 0;
 
-            // Loop until user selects "quit"
+            // Loop until user selects "quit" or "main menu"
             while (true)
             {
                 // Seed the agent's RNG with the current seed
@@ -125,6 +124,9 @@ namespace ConnectFour
 
                 // Create and start new game on standard 7 x 6 board
                 GameEngine game = new GameEngine(agent1, agent2, 7, 6, true);
+
+                // Print a "starting game" message
+                Console.Write(String.Format(START, count++, agent1, agent2));
 
                 // Start one game and play until it ends
                 Move winner = game.Start();
