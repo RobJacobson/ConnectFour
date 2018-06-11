@@ -35,6 +35,7 @@ namespace ConnectFour
 
         static void Main(string[] args)
         {
+            Console.ReadLine();
             MainMenu();
 
             // Pause before exiting
@@ -83,7 +84,11 @@ namespace ConnectFour
 
                 // Start one game and play until it ends
                 Move winner = game.Start();
+
+                // Show board
+                Output.ShowMove(game.Board, game.Moves.Last());
                 ShowResult(game.Board, game.Moves, winner);
+
 
                 // Count the number of victories per side
                 if (winner == null)
@@ -150,9 +155,6 @@ namespace ConnectFour
         // Display winner and prompt for next game options
         private static void ShowResult(Board board, List<Move> moves, Move winner)
         {
-            // Show board
-            Output.ShowMove(board, moves.Last());
-
             // Display winner
             if (winner == null)
             {
@@ -160,7 +162,7 @@ namespace ConnectFour
             }
             else
             {
-                Console.WriteLine($"Player { winner.Token } wins!");
+                Console.WriteLine($"Player { winner.Token } wins in move {moves.Count}!");
             }
             Console.WriteLine();
         }
