@@ -51,7 +51,6 @@
     <Compile Include="Agents\MinimaxKnnAgent.cs" />
     <Compile Include="Agents\MinimaxRandomAgent.cs" />
     <Compile Include="Agents\RandomAgent.cs" />
-    <Compile Include="Evaluator.cs" />
     <Compile Include="Gameplay\Move.cs" />
     <Compile Include="Gameplay\Board.cs" />
     <Compile Include="Gameplay\GameEngine.cs" />
