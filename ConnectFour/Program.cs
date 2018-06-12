@@ -58,8 +58,7 @@ namespace ConnectFour
             else
             {
                 Output.ScrollUp(25);
-                //PlaySingle(agent1, agent2);
-                PlaySingle(agent2, agent1);
+                PlaySingle(agent1, agent2);
             }
         }
 
@@ -76,6 +75,8 @@ namespace ConnectFour
             // Play 'count' number of games without user input
             for (int rep = 0; rep < reps; rep++)
             {
+                Output.ScrollUp(25);
+
                 // Start new game and alternate Red and Yellow as player 1
                 GameEngine game;
                 if (rep % 2 == 0)
@@ -172,6 +173,7 @@ namespace ConnectFour
             {
                 Console.WriteLine($"Game {++gameCount}: Player { winner.Token } wins in move {game.Moves.Count}!");
             }
+            Console.WriteLine();
             return game;
         }
 
