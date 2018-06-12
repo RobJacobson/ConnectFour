@@ -15,127 +15,72 @@ namespace ConnectFour.Gameplay
         // Shows the board as colorized ASCII art with description of move
         public static void ShowMove(Board board, Move move)
         {
-            // Scroll the console up to keep a record of last move
-            ScrollUp(board.Height + 10);
+            Output.HideScreen();
+
 
             // Print a colorized version of the board with a caret
-            Output.ShowFrame(board);
-            Output.ShowTokens(board);
+            Console.WriteLine();
+            Console.WriteLine(GetBoardASCII(board));
             Output.ShowCaret(board, move);
+            Console.WriteLine();
 
             // Display a summary of the move to the right
-            Output.PrintColor(3 + board.Width * 3 / 2, 0, ConsoleColor.Gray, $"Move: { board.NumTokens } ");
+            Output.PrintColor(ConsoleColor.Gray, $"Move: { board.NumTokens } ");
 
             string[] prediction = move.ToString().Split(new[] { Environment.NewLine }, StringSplitOptions.None);
             for (int i = 0; i < prediction.Length; i++)
             {
-                Output.PrintColor(10 + board.Width * 3, i + 1, ConsoleColor.Gray, prediction[i]);
+                Output.PrintColor(ConsoleColor.Gray, prediction[i]);
             }
-
-
-            // Move cursor to end of the window
-            Console.SetCursorPosition(0, Console.BufferHeight - 3);
-
 
             // Pause momentarily to reduce screen flickering in fast games
             System.Threading.Thread.Sleep(250);
         }
 
-        public static void ShowFrame(Board board)
+        public static string GetBoardASCII(Board board)
         {
-            // Lazy initialization of frame text
-            if (BoardFrame == null)
+            var sb = new StringBuilder();
+
+            // Append the top border
+            string horizontalBar = new string('═', board.Width * 3);
+            sb.AppendLine($"      ╔═{horizontalBar}═╗");
+
+            // Append each row (last row first)
+            for (int row = board.Height - 1; row >= 0; row--)
             {
-                var sb = new StringBuilder();
-                string bar = new string('═', board.Width * 3 - 2);
-                string spaces = new string(' ', board.Width * 3 - 2);
-
-                // Append the top border
-                sb.AppendLine("     ╔═" + bar + "═╗");
-
-                // Append rows
-                for (int row = board.Height - 1; row >= 0; row--)
-                {
-                    sb.Append($"  { row }: ");
-                    sb.Append("║  " + spaces + "║");
-                    sb.AppendLine();
-                }
-
-                // Append bottom
-                sb.AppendLine("     ╠═" + bar + "═╣ ");
-                sb.Append("     ╩");
-                for (int i = 0; i < board.Width; i++)
-                {
-                    sb.Append($" {i} ");
-                }
-                sb.Append("╩ ");
-                sb.AppendLine();
-
-                BoardFrame = sb.ToString();
+                string tokens = board.GetRowText(row).Replace("\t", "  ");
+                sb.AppendLine($"  { row }:  ║  { tokens }║");
             }
 
-            PrintColor(0, 0, ConsoleColor.DarkBlue, BoardFrame);
-        }
+            // Append bottom border and list of column numbers
+            string columns = String.Join("  ", Enumerable.Range(0, board.Width));
+            sb.AppendLine($"      ╠═{horizontalBar}═╣ ");
+            sb.AppendLine($"      ╩  {columns}  ╩");
 
+            return sb.ToString();
+
+        }
+        
 
         // Prints the string to console at the specified location and color
-        public static void PrintColor(int col, int row, ConsoleColor color, string text)
+        public static void PrintColor(ConsoleColor color, string text)
         {
-            // Move the cursor to the top of the visible window
-            int bufRow = Console.BufferHeight - Console.WindowHeight + row;
-            Console.SetCursorPosition(col, bufRow + 1);
-
             Console.ForegroundColor = color;
             Console.WriteLine(text);
             Console.ResetColor();
         }
+        
 
-
-        // Prints a colorized representation of the ASCII-art text to console
-        public static void ShowTokens(Board board)
+        public static void HideScreen()
         {
-            for (int row = board.Height - 1; row >= 0; row--)
-            {
-                for (int col = 0; col < board.Width; col++)
-                {
-                    int x = col * 3 + 7;
-                    int y = board.Height - row;
-                    switch (board.Grid[col, row])
-                    {
-                        case Token.Red:
-                            PrintColor(x, y, ConsoleColor.Red, "X");
-                            break;
-
-                        case Token.Yel:
-                            PrintColor(x, y, ConsoleColor.Yellow, "O");
-                            break;
-
-                        default:
-                            PrintColor(x, y, ConsoleColor.DarkBlue, "■");
-                            break;
-                    }
-                }
-            }
+            Console.WindowTop += Console.WindowHeight - 5;
         }
-
-
-        // Scrolls window up with minimal screen flickering to hide last move
-        public static void ScrollUp(int rows)
-        {
-            var sb = new StringBuilder();
-            for (int i = 0; i < rows; i++)
-            {
-                sb.AppendLine();
-            }
-            Console.WriteLine(sb.ToString());
-        }
-
 
         // Print a caret to show the current column played
         public static void ShowCaret(Board board, Move move)
         {
-            int x = move.Col * 3 + 7;
-            PrintColor(x, board.Height + 3, move.DisplayColor(), "^");
+            int x = move.Col * 3 + 9;
+            PrintColor(move.DisplayColor(), new string(' ', x) + "^");
         }
 
     }

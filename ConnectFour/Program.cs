@@ -33,7 +33,6 @@ namespace ConnectFour
 
         static void Main(string[] args)
         {
-            Console.ReadLine();
             MainMenu();
 
             // Pause before exiting
@@ -44,7 +43,7 @@ namespace ConnectFour
         private static void MainMenu()
         {
             // Prompt for game mode (batch or single-game)
-            char key = PromptChar(MODE, new char[] { 's', 't' });
+            string response = PromptString(MODE, new string[] { "s", "t" });
             Console.WriteLine();
 
             // Prompt for type of each agent and create agents
@@ -52,13 +51,16 @@ namespace ConnectFour
             AbstractAgent agent2 = SelectAgent("Yellow", Token.Yel);
 
             // Start the appropriate game mode
-            if (key == 't')
+            if (response == "t")
             {
                 PlayBatch(agent1, agent2);
             }
             else
             {
-                Output.ScrollUp(40);
+                for (int i = 0; i < 10; i++)
+                {
+                    Console.WriteLine();
+                }
                 PlaySingle(agent1, agent2);
             }
         }
@@ -133,21 +135,21 @@ namespace ConnectFour
                 ShowResult(game.Board, game.Moves, winner);
 
                 // Play another game?
-                char key = PromptChar(END_GAME, new char[] { 'r', 'n', 'm', 'q' });
-                switch (key)
+                string response = PromptString(END_GAME, new string[] { "r", "n", "m", "q" });
+                switch (response)
                 {
-                    case 'r':
+                    case "r":
                         break;
 
-                    case 'n':
+                    case "n":
                         seed = randomSeedGenerator.Next();
                         break;
 
-                    case 'm':
+                    case "m":
                         MainMenu();
                         break;
 
-                    case 'q':
+                    case "q":
                         return;
                 }
 
@@ -171,15 +173,15 @@ namespace ConnectFour
 
 
         // Shows prompt, waits for valid keypress, and returns keypress
-        private static char PromptChar(string prompt, char[] validChars)
+        private static string PromptString(string prompt, string[] expected)
         {
-            char response;
+            string response;
             Console.WriteLine(prompt);
             do
             {
                 Console.Write(CARET);
-                response = Char.ToLower(Console.ReadKey().KeyChar);
-            } while (!validChars.Contains(response));
+                response = Console.ReadLine().ToLower();
+            } while (!expected.Contains(response));
             Console.WriteLine();
             Console.WriteLine();
             return response;

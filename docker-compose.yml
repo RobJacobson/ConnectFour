@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  connectfour:
+    image: ${DOCKER_REGISTRY}connectfour
+    build:
+      context: .\ConnectFour
+      dockerfile: Dockerfile
