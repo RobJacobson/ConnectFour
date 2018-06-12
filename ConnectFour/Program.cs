@@ -11,6 +11,7 @@ namespace ConnectFour
 {
     class Program
     {
+        static int gameCount = 0;
 
         const string MODE      = "Select game mode (S for single game, T for tournament)";
         const string NUMBER    = "    Select number of iterations:";
@@ -18,7 +19,6 @@ namespace ConnectFour
         const string END_GAME  = "    New game? (R to replay, N for new game, M for main menu, Q to quit)";
         const string END_TEST  = "    New tournament? (N for new tournament, M for main menu, Q to quit)";
         const string PLY_DEPTH = "    Ply depth for MiniMax:";
-        const string START     = "Game {0}: {1} vs. {2}";
         const string CARET     = "    > ";
         const string SELECT_AGENT_MESSAGE =
 @"Select agent type for {0}:
@@ -28,7 +28,8 @@ namespace ConnectFour
     4. Minimax agent, 1-nn heuristic
     5. Minimax agent, 2-nn heuristic
     6. Minimax agent, 3-nn heuristic
-    7. Puny human";
+    7. Minimax agent, goal-directed heuristic
+    8. Puny human";
 
 
         static void Main(string[] args)
@@ -44,7 +45,6 @@ namespace ConnectFour
         {
             // Prompt for game mode (batch or single-game)
             string response = PromptString(MODE, new string[] { "s", "t" });
-            Console.WriteLine();
 
             // Prompt for type of each agent and create agents
             AbstractAgent agent1 = SelectAgent("Red", Token.Red);
@@ -57,11 +57,9 @@ namespace ConnectFour
             }
             else
             {
-                for (int i = 0; i < 10; i++)
-                {
-                    Console.WriteLine();
-                }
-                PlaySingle(agent1, agent2);
+                Output.ScrollUp(25);
+                //PlaySingle(agent1, agent2);
+                PlaySingle(agent2, agent1);
             }
         }
 
@@ -73,29 +71,28 @@ namespace ConnectFour
             // Track the number of wins per player
             int redWins = 0;
             int yelWins = 0;
-            int draw = 0;
+            int draws = 0;
 
             // Play 'count' number of games without user input
             for (int rep = 0; rep < reps; rep++)
             {
-                // Create and start new game on standard 7 x 6 board
-                var game = new GameEngine(agent1, agent2, 7, 6, false);
-                Console.Write(String.Format(START, rep, agent1, agent2));
-
-                // Start one game and play until it ends
-                Move winner = game.Start();
-
-                // Show board
-                Output.ShowMove(game.Board, game.Moves.Last());
-                ShowResult(game.Board, game.Moves, winner);
-
+                // Start new game and alternate Red and Yellow as player 1
+                GameEngine game;
+                if (rep % 2 == 0)
+                {
+                    game = PlayGame(agent1, agent2, false);
+                }
+                else
+                {
+                    game = PlayGame(agent2, agent1, false);
+                }
 
                 // Count the number of victories per side
-                if (winner == null)
+                if (game.Winner == null)
                 {
-                    draw++;
+                    draws++;
                 }
-                else if (winner.Token == Token.Red)
+                else if (game.Winner.Token == Token.Red)
                 {
                     redWins++;
                 }
@@ -104,10 +101,15 @@ namespace ConnectFour
                     yelWins++;
                 }
 
+
             }
 
             // Print the summary results
-            Console.WriteLine($"Red wins: {redWins}, Yellow wins: {yelWins}, draws: {draw}");
+            Console.WriteLine($"\t\tPLayer Red\t\tPlayer Yellow\t\tNone");
+            Console.Write($"Games won:\t\t {redWins}\t({redWins / reps:p1})");
+            Console.Write($"\t\t{redWins}\t({redWins / reps:p1})");
+            Console.Write($"\t\t{yelWins}\t({yelWins / reps:p1})");
+            Console.Write($"\t\t{draws  }\t({draws   / reps:p1})");
             Console.WriteLine();
         }
 
@@ -116,23 +118,13 @@ namespace ConnectFour
             // Get next random seed (we can replay game by reusing this seed)
             var randomSeedGenerator = new Random();
             int seed = randomSeedGenerator.Next();
-            int count = 0;
 
             // Loop until user selects "quit" or "main menu"
             while (true)
             {
-                // Seed the agent's RNG with the current seed
+                // Create a new RNG for agents using the selected seed
                 AbstractAgent.Reseed(seed);
-
-                // Create and start new game on standard 7 x 6 board
-                GameEngine game = new GameEngine(agent1, agent2, 7, 6, true);
-
-                // Print a "starting game" message
-                Console.Write(String.Format(START, count++, agent1, agent2));
-
-                // Start one game and play until it ends
-                Move winner = game.Start();
-                ShowResult(game.Board, game.Moves, winner);
+                PlayGame(agent1, agent2, true);
 
                 // Play another game?
                 string response = PromptString(END_GAME, new string[] { "r", "n", "m", "q" });
@@ -156,19 +148,31 @@ namespace ConnectFour
             }
         }
 
-        // Display winner and prompt for next game options
-        private static void ShowResult(Board board, List<Move> moves, Move winner)
+        private static GameEngine PlayGame(AbstractAgent agent1, AbstractAgent agent2, bool verbose)
         {
-            // Display winner
+            // Create and start new game on standard 7 x 6 board
+            GameEngine game = new GameEngine(agent1, agent2, 7, 6, verbose);
+
+            // Start one game and play until it ends
+            Move winner = game.Start();
+
+            // Show winning board if it wasn't shown in GameEngine
+            if (!verbose)
+            {
+                Output.ShowMove(game.Board, game.Moves.Last());
+
+            }
+
+            // Display message
             if (winner == null)
             {
                 Console.WriteLine("Tie game");
             }
             else
             {
-                Console.WriteLine($"Player { winner.Token } wins in move {moves.Count}!");
+                Console.WriteLine($"Game {++gameCount}: Player { winner.Token } wins in move {game.Moves.Count}!");
             }
-            Console.WriteLine();
+            return game;
         }
 
 
@@ -249,6 +253,10 @@ namespace ConnectFour
                     return new MinimaxKnnAgent(token, plies, 3);
 
                 case 7:
+                    plies = PromptInt(PLY_DEPTH);
+                    return new MinimaxGoalAgent(token, plies);
+
+                case 8:
                     return new HumanAgent(token);
             }
             throw new ArgumentException($"Invalid agent number");

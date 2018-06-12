@@ -30,7 +30,7 @@ namespace ConnectFour.Gameplay
             string result = $"{ Token } => Col {Col} ({ Score:n0})";
             if (Next != null)
             {
-                result += Environment.NewLine + Next.ToString();
+                result += ";" + Next.ToString();
             }
             return result;
         }

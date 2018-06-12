@@ -33,12 +33,12 @@ namespace ConnectFour.Agents
             if (board.NumTokens == 0)
             {
                 // Yes; just pick the middle position
-                move = new Move(Token.Red, 3, 0, null);
+                move = new Move(this.Token, board.Width / 2, 0, null);
             }
             else
             {
-                // No; call Max on even moves, Min on odd
-                if (board.NumTokens % 2 == 0)
+                // No; call Max for red, Min for yellow
+                if (this.Token == Token.Red)
                 {
                     move = Max(board, PlyDepth);
                 }
@@ -80,7 +80,7 @@ namespace ConnectFour.Agents
                     // Yes, winning state found; return undiscounted score
                     best = new Move(Token.Red, col, PERFECT_RED, null);
                 }
-                else if (depth == 0)
+                else if (depth == 1)
                 {
                     // Yes, out of search space (check heuristic)
                     int score = Heuristic(board, col, Token.Red);
@@ -135,13 +135,13 @@ namespace ConnectFour.Agents
                     // Yes, winning state found
                     best = new Move(Token.Yel, col, PERFECT_YEL, null);
                 }
-                else if (depth == 0)
+                else if (depth == 1)
                 {
                     // Yes, out of search space (check heuristic)
-                    int score = Heuristic(board, col, Token.Red);
+                    int score = Heuristic(board, col, Token.Yel);
                     if (score < best.Score)
                     {
-                        best = new Move(Token.Red, col, score, null);
+                        best = new Move(Token.Yel, col, score, null);
                     }
                 }
                 else

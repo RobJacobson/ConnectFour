@@ -24,41 +24,26 @@ namespace ConnectFour.Agents
             int row = board.ColHeight[col] - 1;
             int score = 0;
 
+
             // Score each of the eight immediately-adjacent squares
-            score += GetScore(board, col + 0, row + 1, player);
-            score += GetScore(board, col + 1, row + 1, player);
-            score += GetScore(board, col + 1, row + 0, player);
-            score += GetScore(board, col + 1, row - 1, player);
-            score += GetScore(board, col + 0, row - 1, player);
-            score += GetScore(board, col - 1, row - 1, player);
-            score += GetScore(board, col - 1, row + 0, player);
-            score += GetScore(board, col - 1, row + 1, player);
-
-            // For k > 1, score the one-step-removed tokens
-            if (K > 1)
+            for (int k = 0; k < K; k++)
             {
-                score += GetScore(board, col + 0, row + 2, player);
-                score += GetScore(board, col + 2, row + 2, player);
-                score += GetScore(board, col + 2, row + 0, player);
-                score += GetScore(board, col + 2, row - 2, player);
-                score += GetScore(board, col + 0, row - 2, player);
-                score += GetScore(board, col - 2, row - 2, player);
-                score += GetScore(board, col - 2, row + 0, player);
-                score += GetScore(board, col - 2, row + 2, player);
+                score += GetScore(board, col + 0, row + k, player);
+                score += GetScore(board, col + k, row + k, player);
+                score += GetScore(board, col + k, row + 0, player);
+                score += GetScore(board, col + k, row - k, player);
+                score += GetScore(board, col + 0, row - k, player);
+                score += GetScore(board, col - k, row - k, player);
+                score += GetScore(board, col - k, row + 0, player);
+                score += GetScore(board, col - k, row + k, player);
             }
 
-            // For k > 2, score the two-step-removed tokens
-            if (K > 2)
+            // Reverse the score if player yellow
+            if (player == Token.Yel)
             {
-                score += GetScore(board, col + 0, row + 3, player);
-                score += GetScore(board, col + 3, row + 3, player);
-                score += GetScore(board, col + 3, row + 0, player);
-                score += GetScore(board, col + 3, row - 3, player);
-                score += GetScore(board, col + 0, row - 3, player);
-                score += GetScore(board, col - 3, row - 3, player);
-                score += GetScore(board, col - 3, row + 0, player);
-                score += GetScore(board, col - 3, row + 3, player);
+                score = -score;
             }
+
             return score * POINT_VAL;
         }
 
@@ -71,11 +56,11 @@ namespace ConnectFour.Agents
                 Token square = board.Grid[col, row];
                 if (square == Token.None)
                 {
-                    return (player == Token.Red) ? 1 : -1;
+                    return 1;
                 }
                 if (square == player)
                 {
-                    return (player == Token.Red) ? 2 : -2;
+                    return 2;
                 }
             }
             

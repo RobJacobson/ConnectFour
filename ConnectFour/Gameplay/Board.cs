@@ -334,9 +334,9 @@ namespace ConnectFour.Gameplay
             {
                 switch (Grid[col, row])
                 {
-                    case Token.Red:  sb.Append("O\t"); break;
-                    case Token.Yel:  sb.Append("X\t"); break;
-                    case Token.None: sb.Append("■\t"); break;
+                    case Token.Red:  sb.Append(" O "); break;
+                    case Token.Yel:  sb.Append(" X "); break;
+                    case Token.None: sb.Append(" ■ "); break;
                 }
             }
             return sb.ToString();

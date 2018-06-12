@@ -15,10 +15,10 @@ namespace ConnectFour.Agents
         {
         }
 
-        // Returns a random integer in [-1000000, 1000000] as a heuristic
+        // Returns a random integer in [-1000, 1000] as a heuristic
         public override int Heuristic(Board board, int column, Token player)
         {
-            return Randomizer.Next(-1000000, 1000001);
+            return Randomizer.Next(-1000, 1001);
         }
     }
 }

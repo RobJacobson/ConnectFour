@@ -9,35 +9,41 @@ namespace ConnectFour.Gameplay
     // Static class for custom supporting methods for console output
     public static class Output
     {
-        public static string BoardFrame;
-
 
         // Shows the board as colorized ASCII art with description of move
         public static void ShowMove(Board board, Move move)
         {
-            Output.HideScreen();
+            Output.ScrollUp(board.Height + 5);
 
+            // Remember our current row
+            int wintop = Console.WindowTop;
 
-            // Print a colorized version of the board with a caret
-            Console.WriteLine();
-            Console.WriteLine(GetBoardASCII(board));
-            Output.ShowCaret(board, move);
-            Console.WriteLine();
+            // Reset the cursor to top line
+            Console.CursorTop = Console.WindowTop + 1;
+            Console.CursorLeft = 0;
+
+            // Draw the ASCII-art boart and caret
+            Output.ShowBoard(board, move);
+
+            // Reset the cursor to second line from top
+            Console.CursorTop = Console.WindowTop + 1;
 
             // Display a summary of the move to the right
-            Output.PrintColor(ConsoleColor.Gray, $"Move: { board.NumTokens } ");
-
-            string[] prediction = move.ToString().Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-            for (int i = 0; i < prediction.Length; i++)
+            string[] output = move.ToString().Split(';');
+            foreach (string line in output)
             {
-                Output.PrintColor(ConsoleColor.Gray, prediction[i]);
+                Console.CursorLeft = board.Width * 3 + 15;
+                Console.WriteLine(line);
             }
+            Console.CursorTop = Console.WindowTop + board.Height + 10;
 
             // Pause momentarily to reduce screen flickering in fast games
             System.Threading.Thread.Sleep(250);
         }
 
-        public static string GetBoardASCII(Board board)
+
+        // Returns an ASCII-art representation of game board
+        public static string GetBoardASCII(Board board, Move move)
         {
             var sb = new StringBuilder();
 
@@ -48,8 +54,8 @@ namespace ConnectFour.Gameplay
             // Append each row (last row first)
             for (int row = board.Height - 1; row >= 0; row--)
             {
-                string tokens = board.GetRowText(row).Replace("\t", "  ");
-                sb.AppendLine($"  { row }:  ║  { tokens }║");
+                string tokens = board.GetRowText(row);
+                sb.AppendLine($"  { row }:  ║ { tokens } ║");
             }
 
             // Append bottom border and list of column numbers
@@ -57,6 +63,12 @@ namespace ConnectFour.Gameplay
             sb.AppendLine($"      ╠═{horizontalBar}═╣ ");
             sb.AppendLine($"      ╩  {columns}  ╩");
 
+            // Append caret to show last move
+            if (move != null)
+            {
+                int x = move.Col * 3 + 9;
+                sb.AppendLine(new string(' ', x) + "^");
+            }
             return sb.ToString();
 
         }
@@ -71,17 +83,32 @@ namespace ConnectFour.Gameplay
         }
         
 
-        public static void HideScreen()
+        public static void ScrollUp(int count)
         {
-            Console.WindowTop += Console.WindowHeight - 5;
+            Console.WindowTop += count;
         }
 
-        // Print a caret to show the current column played
-        public static void ShowCaret(Board board, Move move)
-        {
-            int x = move.Col * 3 + 9;
-            PrintColor(move.DisplayColor(), new string(' ', x) + "^");
-        }
 
+        // Prints a colorized representation of the ASCII-art text to console
+        public static void ShowBoard(Board board, Move move)
+        {
+            // Get ASCII art representation and iterate through each character
+            foreach (char c in GetBoardASCII(board, move))
+            {
+                // Select appropriate color for character and print to console
+                ConsoleColor foreground;
+                switch (c)
+                {
+                    case 'O': foreground = ConsoleColor.Red; break;
+                    case 'X': foreground = ConsoleColor.Yellow; break;
+                    case '^': foreground = (move.Token == Token.Red) ? ConsoleColor.Red : ConsoleColor.Yellow; break;
+                    default:  foreground = ConsoleColor.DarkBlue; break;
+                }
+                Console.ForegroundColor = foreground;
+                Console.Write(c);
+            }
+            Console.ResetColor();
+        }
+        
     }
 }

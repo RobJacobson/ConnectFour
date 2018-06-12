@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ConnectFour.Gameplay;
 using ConnectFour.Agents;
+using System.Diagnostics;
 
 namespace ConnectFour
 {
@@ -12,6 +13,7 @@ namespace ConnectFour
     {
         public Board Board { get; }
         public List<Move> Moves { get; }
+        public Move Winner { get; private set; }
         private readonly AbstractAgent player1;
         private readonly AbstractAgent player2;
         private readonly bool verbose;
@@ -50,10 +52,15 @@ namespace ConnectFour
                 {
                     Output.ShowMove(Board, move);
                 }
+                else
+                {
+                    Console.Write('.');
+                }
 
                 // Return if this player has won
                 if (winner)
                 {
+                    this.Winner = move;
                     return move;
                 }
 
