@@ -65,7 +65,7 @@ namespace ConnectFour
         private static void PlayBatch(AbstractAgent agent1, AbstractAgent agent2)
         {
             // Prompt for the number of batch repetitions
-            int reps = PromptInt(NUMBER);
+            int rounds = PromptInt(NUMBER);
 
             // Track the number of wins per player
             int redWins = 0;
@@ -73,13 +73,13 @@ namespace ConnectFour
             int draws = 0;
 
             // Play 'count' number of games without user input
-            for (int rep = 0; rep < reps; rep++)
+            for (int round = 0; round < rounds; round++)
             {
-                Output.ScrollUp(25);
+                //Output.ScrollUp(25);
 
                 // Start new game and alternate Red and Yellow as player 1
                 GameEngine game;
-                if (rep % 2 == 0)
+                if (round % 2 == 0)
                 {
                     game = PlayGame(agent1, agent2, false);
                 }
@@ -106,11 +106,35 @@ namespace ConnectFour
             }
 
             // Print the summary results
-            Console.WriteLine($"\t\tPLayer Red\t\tPlayer Yellow\t\tNone");
-            Console.Write($"Games won:\t\t {redWins}\t({redWins / reps:p1})");
-            Console.Write($"\t\t{redWins}\t({redWins / reps:p1})");
-            Console.Write($"\t\t{yelWins}\t({yelWins / reps:p1})");
-            Console.Write($"\t\t{draws  }\t({draws   / reps:p1})");
+            Console.WriteLine($"\t\tRed\t\tYellow\t\tNone");
+
+            // Output number of games won
+            Console.Write($"Games won:\t");
+            Console.Write($"{redWins}\t({redWins / rounds:p1})\t");
+            Console.Write($"{yelWins}\t({yelWins / rounds:p1})\t");
+            Console.Write($"{draws  }\t({draws   / rounds:p1})\t");
+            Console.WriteLine();
+
+            // Output number of average iterations
+            if (agent1 is MinimaxAgent && agent2 is MinimaxAgent)
+            {
+                Console.Write($"Avg. Steps\t");
+                Console.Write($"{((MinimaxAgent)agent1).MinimaxCount / rounds}\t\t");
+                Console.Write($"{((MinimaxAgent)agent2).MinimaxCount / rounds}\t\t");
+                Console.WriteLine();
+            }
+
+
+            // Output number of average duration
+            if (agent1 is MinimaxAgent && agent2 is MinimaxAgent)
+            {
+                Console.Write($"Avg. Duration\t");
+                Console.Write($"{(agent1.Clock.ElapsedMilliseconds * 1000 / rounds)}\t\t");
+                Console.Write($"{(agent2.Clock.ElapsedMilliseconds * 1000 / rounds)}\t\t");
+                Console.WriteLine();
+            }
+
+            Console.Write($"{((MinimaxAgent)agent1).MinimaxCount / rounds}\t\t");
             Console.WriteLine();
         }
 

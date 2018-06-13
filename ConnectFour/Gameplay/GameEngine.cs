@@ -33,6 +33,8 @@ namespace ConnectFour
         // Initiates a game and continues until one player wins or board full
         public Move Start()
         {
+            Console.WriteLine();
+
             // Iterate through the maximum number of moves on board
             int maxTurns = Board.Width * Board.Height;
             for (int turn = 0; turn < maxTurns; turn++)
