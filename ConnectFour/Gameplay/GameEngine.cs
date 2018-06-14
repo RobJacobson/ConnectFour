@@ -31,10 +31,8 @@ namespace ConnectFour
 
 
         // Initiates a game and continues until one player wins or board full
-        public Move Start()
+        public Move StartNewGame()
         {
-            Console.WriteLine();
-
             // Iterate through the maximum number of moves on board
             int maxTurns = Board.Width * Board.Height;
             for (int turn = 0; turn < maxTurns; turn++)
@@ -54,10 +52,6 @@ namespace ConnectFour
                 {
                     Output.ShowMove(Board, move);
                 }
-                else
-                {
-                    Console.Write('.');
-                }
 
                 // Return if this player has won
                 if (winner)
@@ -69,6 +63,7 @@ namespace ConnectFour
             }
 
             // End of game without a winner (tie game)
+            this.Winner = null;
             return null;
         }
 

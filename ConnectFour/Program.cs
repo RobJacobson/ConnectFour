@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ConnectFour.Gameplay;
 using ConnectFour.Agents;
 using System.Collections;
+using System.Diagnostics;
 
 namespace ConnectFour
 {
@@ -71,12 +72,14 @@ namespace ConnectFour
             int redWins = 0;
             int yelWins = 0;
             int draws = 0;
+            int moves = 0;
+
+            // Create and start timer
+            var sw = Stopwatch.StartNew();
 
             // Play 'count' number of games without user input
             for (int round = 0; round < rounds; round++)
             {
-                //Output.ScrollUp(25);
-
                 // Start new game and alternate Red and Yellow as player 1
                 GameEngine game;
                 if (round % 2 == 0)
@@ -101,41 +104,55 @@ namespace ConnectFour
                 {
                     yelWins++;
                 }
-
+                moves += game.Moves.Count;
 
             }
 
+            // Report overall iterations and time
+            sw.Stop();
+            Console.WriteLine();
+            Console.WriteLine($"Iterations:    {rounds}");
+            Console.WriteLine($"Running time:  {sw.ElapsedMilliseconds} ms");
+            Console.WriteLine($"Average time:  {((double)sw.ElapsedMilliseconds) / rounds} ms");
+            Console.WriteLine($"Average turns: {((double)moves) / rounds}");
+            Console.WriteLine();
+
             // Print the summary results
-            Console.WriteLine($"\t\tRed\t\tYellow\t\tNone");
+            Console.WriteLine($"\t\tRed\t\t\tYellow\t\t\tNone");
 
             // Output number of games won
             Console.Write($"Games won:\t");
-            Console.Write($"{redWins}\t({redWins / rounds:p1})\t");
-            Console.Write($"{yelWins}\t({yelWins / rounds:p1})\t");
-            Console.Write($"{draws  }\t({draws   / rounds:p1})\t");
-            Console.WriteLine();
+            Console.Write($"{redWins}\t({((double)redWins) / rounds:p1})\t\t");
+            Console.Write($"{yelWins}\t({((double)yelWins) / rounds:p1})\t\t");
+            Console.Write($"{draws  }\t({((double)draws)   / rounds:p1})\t\t");
+
+
+            int mmCount1 = 0;
+            if (agent1 is MinimaxAgent)
+            {
+                mmCount1 = (agent1 as MinimaxAgent).MinimaxCount;
+            }
+
+            int mmCount2 = 0;
+            if (agent2 is MinimaxAgent)
+            {
+                mmCount2 = (agent2 as MinimaxAgent).MinimaxCount;
+            }
 
             // Output number of average iterations
-            if (agent1 is MinimaxAgent && agent2 is MinimaxAgent)
-            {
-                Console.Write($"Avg. Steps\t");
-                Console.Write($"{((MinimaxAgent)agent1).MinimaxCount / rounds}\t\t");
-                Console.Write($"{((MinimaxAgent)agent2).MinimaxCount / rounds}\t\t");
-                Console.WriteLine();
-            }
-
-
-            // Output number of average duration
-            if (agent1 is MinimaxAgent && agent2 is MinimaxAgent)
-            {
-                Console.Write($"Avg. Duration\t");
-                Console.Write($"{(agent1.Clock.ElapsedMilliseconds * 1000 / rounds)}\t\t");
-                Console.Write($"{(agent2.Clock.ElapsedMilliseconds * 1000 / rounds)}\t\t");
-                Console.WriteLine();
-            }
-
-            Console.Write($"{((MinimaxAgent)agent1).MinimaxCount / rounds}\t\t");
+            Console.Write($"Avg. Minimax Steps\t");
+            Console.Write($"{mmCount1 / (double)rounds}\t\t");
+            Console.Write($"{mmCount2 / (double)rounds}");
             Console.WriteLine();
+
+            // Output average duration of each game
+            Console.Write($"Avg. Duration\t");
+            Console.Write($"{(agent1.Clock.ElapsedMilliseconds * 1000.0 / rounds)} us\t");
+            Console.Write($"{(agent2.Clock.ElapsedMilliseconds * 1000.0 / rounds)} us");
+            Console.WriteLine();
+
+            MainMenu();
+
         }
 
         private static void PlaySingle(AbstractAgent agent1, AbstractAgent agent2)
@@ -179,25 +196,29 @@ namespace ConnectFour
             GameEngine game = new GameEngine(agent1, agent2, 7, 6, verbose);
 
             // Start one game and play until it ends
-            Move winner = game.Start();
+            Move winner = game.StartNewGame();
 
             // Show winning board if it wasn't shown in GameEngine
             if (!verbose)
             {
-                Output.ShowMove(game.Board, game.Moves.Last());
+                //                Output.ShowMove(game.Board, game.Moves.Last());
 
             }
 
             // Display message
-            if (winner == null)
+            gameCount++;
+            if (gameCount % 1000 == 0)
             {
-                Console.WriteLine("Tie game");
+                if (winner == null)
+                {
+                    Console.WriteLine($"Game {gameCount}: Tie game");
+                }
+                else
+                {
+                    Console.WriteLine($"Game {gameCount}: Player { winner.Token } wins in move {game.Moves.Count}!");
+                }
+
             }
-            else
-            {
-                Console.WriteLine($"Game {++gameCount}: Player { winner.Token } wins in move {game.Moves.Count}!");
-            }
-            Console.WriteLine();
             return game;
         }
 
@@ -212,7 +233,6 @@ namespace ConnectFour
                 Console.Write(CARET);
                 response = Console.ReadLine().ToLower();
             } while (!expected.Contains(response));
-            Console.WriteLine();
             Console.WriteLine();
             return response;
         }

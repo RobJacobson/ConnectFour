@@ -7,7 +7,7 @@ using ConnectFour.Gameplay;
 
 namespace ConnectFour.Agents
 {
-    class MinimaxAgent : AbstractAgent
+    public class MinimaxAgent : AbstractAgent
     {
         private static int DECAY       = 2;
         private static int PERFECT_RED =  (int)Math.Pow(2, 30);

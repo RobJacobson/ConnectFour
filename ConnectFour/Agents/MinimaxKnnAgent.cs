@@ -26,7 +26,7 @@ namespace ConnectFour.Agents
 
 
             // Score each of the eight immediately-adjacent squares
-            for (int k = 0; k < K; k++)
+            for (int k = 1; k <= K; k++)
             {
                 score += GetScore(board, col + 0, row + k, player);
                 score += GetScore(board, col + k, row + k, player);

@@ -18,12 +18,15 @@ namespace ConnectFour.Agents
         // Selects a random column from the columns with available moves
         public override Move GetNextMoveDerived(Board board)
         {
-            // Get list of all available columns to play
-            List<int> moves = board.GetAvailableMoves();
+            // Guess a random column until we get a non-full column
+            int move;
+            do
+            {
+                move = Randomizer.Next(0, board.Width);
+            } while (board.ColHeight[move] == board.Height);
 
-            // Return a random member of the list
-            int r = Randomizer.Next(0, moves.Count);
-            return new Move(Token, moves[r], 0, null);            
+            // Return this choice as our move
+            return new Move(this.Token, move, 0, null);
         }
     }
 }

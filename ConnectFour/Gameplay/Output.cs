@@ -13,11 +13,12 @@ namespace ConnectFour.Gameplay
         // Shows the board as colorized ASCII art with description of move
         public static void ShowMove(Board board, Move move)
         {
-            Output.ScrollUp(board.Height + 8);
+            Output.ScrollUp(board.Height + 20);
 
             // Draw the ASCII-art boart and caret
             Console.CursorTop = Console.WindowTop + 1;
             Console.CursorLeft = 0;
+            Console.WriteLine(new string(' ', 12 + board.Width / 2) + "Move: " + board.NumTokens);
             Output.ShowBoard(board, move);
             int rowLast = Console.CursorTop;
 
@@ -34,7 +35,7 @@ namespace ConnectFour.Gameplay
             Console.CursorLeft = 0;
 
             // Pause momentarily to reduce screen flickering in fast games
-            System.Threading.Thread.Sleep(250);
+            // System.Threading.Thread.Sleep(250);
         }
 
 
@@ -77,16 +78,12 @@ namespace ConnectFour.Gameplay
             Console.ResetColor();
         }
         
-
-        public static void MoveTo(int col, int row)
-        {
-            Console.CursorTop = Console.WindowTop + row;
-            Console.CursorLeft = col;
-        }
-
         public static void ScrollUp(int count)
         {
-            Console.WindowTop += count;
+            for (int i = 0; i < count; i++)
+            {
+                Console.WriteLine();
+            }
         }
 
 
